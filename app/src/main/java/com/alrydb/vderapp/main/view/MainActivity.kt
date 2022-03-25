@@ -8,13 +8,24 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import com.alrydb.vderapp.R
+import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: WeatherInfoViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(!isLocationEnabled()){
+
+        //skapa viewmodel
+        viewModel = WeatherInfoViewModel()
+
+
+
+
+        if(!viewModel.isLocationEnabled(this)){
 
             Toast.makeText(this, "Platstjänsten är inte aktiverad", Toast.LENGTH_SHORT).show()
 
@@ -23,31 +34,15 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
 
-        }else{
+
+            }else{
 
             Toast.makeText(this, "Platstjänsten är aktiverad", Toast.LENGTH_SHORT).show()
 
-        }
-
-
-
-
+             }
 
     }
 
-    //MVVM Flytta till en GPS-klass?
-    private fun isLocationEnabled(): Boolean{
-
-        // Få tillgång till användarens plats
-        val locationManager: LocationManager
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-
-
-    }
 
 
 
