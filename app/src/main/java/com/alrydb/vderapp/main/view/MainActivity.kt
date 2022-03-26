@@ -1,16 +1,25 @@
 package com.alrydb.vderapp.main.view
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,11 +62,59 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
 
             }else{
+                Dexter.withContext(this).withPermissions(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                    .withListener(object : MultiplePermissionsListener{
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport?){
+                            // Om behörigheter tillåts av användaren
+                            if (report!!.areAllPermissionsGranted()){
 
-            Toast.makeText(this, "Platstjänsten är aktiverad", Toast.LENGTH_SHORT).show()
+                                viewModel.requestLocationData(this@MainActivity)
 
-             }
+                            }
+                            // Om behörigheter nekas av användaren
+                            if (report.isAnyPermissionPermanentlyDenied){
 
+                            Toast.makeText(this@MainActivity, "Behörighet till mobilens platstjänst har nekats", Toast.LENGTH_SHORT).show()
+
+
+                            }                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                        ) {
+                            showRationalDialogForPermissions()
+                        }
+                    }).onSameThread().check()
+
+
+            }
+
+    }
+
+
+    private fun showRationalDialogForPermissions(){
+        AlertDialog.Builder(this)
+            .setMessage("Behörighet till platstjänsten är inte aktiverad")
+            .setPositiveButton("INSTÄLLNINGAR"){
+                _,_ ->
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+                catch(e: ActivityNotFoundException){
+                    e.printStackTrace()
+                }
+            }
+            .setNegativeButton("Cancel"){
+                dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
 
