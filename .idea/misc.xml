@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/drawable/ic_search.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/menu/options_menu.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
