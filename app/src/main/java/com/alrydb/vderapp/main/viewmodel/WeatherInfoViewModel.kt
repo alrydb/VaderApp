@@ -14,11 +14,12 @@ import androidx.lifecycle.AndroidViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.create
 
-class WeatherInfoViewModel: AndroidViewModel(Application()) {
+class WeatherInfoViewModel(): AndroidViewModel(Application()) {
 
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
+
 
 
 
@@ -57,19 +58,16 @@ class WeatherInfoViewModel: AndroidViewModel(Application()) {
     private val mLocationCallback = object : LocationCallback() {
 
         override fun onLocationResult(locationresult: LocationResult) {
-            val mLasLocation: Location = locationresult.lastLocation
-            val latitude = mLasLocation.latitude
+            val mLastLocation: Location = locationresult.lastLocation
+            val latitude = mLastLocation.latitude
             Log.i("Current Latitude", "$latitude")
 
-            val longitude = mLasLocation.longitude
+            val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
         }
 
 
     }
-
-
-
 
 
 }

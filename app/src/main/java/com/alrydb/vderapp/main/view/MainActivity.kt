@@ -1,9 +1,7 @@
 package com.alrydb.vderapp.main.view
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,13 +11,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
+
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,6 +46,9 @@ class MainActivity : AppCompatActivity() {
 
         //skapa viewmodel
         viewModel = WeatherInfoViewModel()
+
+
+
 
 
 
