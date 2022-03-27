@@ -9,13 +9,20 @@ import android.os.Build
 
 object Constants{
 
+    // WeatherMap API-nyckel
+    const val APP_ID : String = "572c5e9a56daaad8dd3502bf88c4b5c7"
+    const val BASE_URL : String = "http://api.openweathermap.org/data/"
+
+    const val METRIC_UNIT : String = "metric"
+
+
     fun isNetWorkAvailable(context: Context) : Boolean{
         val connectivityManager : ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            // Returnera false om vi inte kan uppkoppla oss till internet
+            // Returnera false om vi inte kan koppla upp oss till internet
             val network = connectivityManager.activeNetwork ?: return false
 
             val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
