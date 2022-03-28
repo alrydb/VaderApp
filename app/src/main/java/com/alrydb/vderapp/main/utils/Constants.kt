@@ -11,7 +11,7 @@ object Constants{
 
     // WeatherMap API-nyckel
     const val APP_ID : String = "572c5e9a56daaad8dd3502bf88c4b5c7"
-    const val BASE_URL : String = "http://api.openweathermap.org/data/"
+    const val BASE_URL : String = "https://api.openweathermap.org/data/"
 
     const val METRIC_UNIT : String = "metric"
 

@@ -15,7 +15,7 @@ class WeatherRepository() {
     // parametrar lon : Double, lat :Double, units: String?, appid : String?
 
 
-     fun getWeather(): Call<WeatherResponse> {
+      fun getWeather(): Call<WeatherResponse> {
 
         return RetrofitInstance.api.getWeather(35.0, 139.0, Constants.METRIC_UNIT, Constants.APP_ID)
 
