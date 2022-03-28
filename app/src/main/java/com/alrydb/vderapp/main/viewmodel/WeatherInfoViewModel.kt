@@ -11,16 +11,71 @@ import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.create
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class WeatherInfoViewModel(): AndroidViewModel(Application()) {
+class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): AndroidViewModel(Application()) {
 
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
 
 
+    val myResponse : MutableLiveData<WeatherResponse> = MutableLiveData()
+
+
+   fun getWeather(){
+
+        //viewModelScope.launch {
+            val response = weatherRepository.getWeather()
+            response.enqueue(object : Callback<WeatherResponse>{
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+                ) {
+                    if(response!!.isSuccessful)
+                    {
+                        val weatherList : WeatherResponse? = response.body() // All data
+                       // myResponse.postValue(weatherList)
+                        myResponse.value = weatherList
+                        Log.i("Response result", "$weatherList")
+                    }
+                    else
+                    {
+                        val rc = response.code()
+                        when(rc){
+                                400 ->{
+                                    Log.e("Error 400", "bad connection")
+                                }
+                            404 ->{
+                                Log.e("Error 404", "not found")
+                            }
+                            else ->{
+                                Log.e("Error", "Generic error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    Log.e("Error", t!!.message.toString())
+                }
+
+            })
+
+
+
+        //}
+
+    }
 
 
     fun isLocationEnabled(context: Context): Boolean{

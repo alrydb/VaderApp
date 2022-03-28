@@ -9,7 +9,7 @@ interface WeatherService {
 
 
     @GET("2.5/weather")
-    fun getWeather(
+      fun getWeather(
         @Query("lat") lat : Double,
         @Query("lon") lon : Double,
         @Query("units") units: String?,

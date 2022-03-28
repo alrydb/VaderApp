@@ -6,11 +6,16 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
+import com.alrydb.vderapp.main.ViewModelFactory
+import com.alrydb.vderapp.main.data.repo.WeatherRepository
 
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 import com.karumi.dexter.Dexter
@@ -43,9 +48,20 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
 
 
+        // skapa repository
+        val repository = WeatherRepository()
+        val viewModelFactory = ViewModelFactory(repository)
+
 
         //skapa viewmodel
-        viewModel = WeatherInfoViewModel()
+        viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
+        viewModel.getWeather()
+
+
+        viewModel.myResponse.observe(this, Observer { response ->
+            Log.i("response", response.id.toString())
+            Log.i("response", response.visibility.toString())
+        })
 
 
 
