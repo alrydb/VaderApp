@@ -29,53 +29,11 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
 
 
+
     val myResponse : MutableLiveData<WeatherResponse> = MutableLiveData()
+    //lateinit var longlat : ArrayList<Double>
 
 
-   fun getWeather(){
-
-        //viewModelScope.launch {
-            val response = weatherRepository.getWeather()
-            response.enqueue(object : Callback<WeatherResponse>{
-                override fun onResponse(
-                    call: Call<WeatherResponse>,
-                    response: Response<WeatherResponse>
-                ) {
-                    if(response!!.isSuccessful)
-                    {
-                        val weatherList : WeatherResponse? = response.body() // All data
-                       // myResponse.postValue(weatherList)
-                        myResponse.value = weatherList
-                        Log.i("Response result", "$weatherList")
-                    }
-                    else
-                    {
-                        val rc = response.code()
-                        when(rc){
-                                400 ->{
-                                    Log.e("Error 400", "bad connection")
-                                }
-                            404 ->{
-                                Log.e("Error 404", "not found")
-                            }
-                            else ->{
-                                Log.e("Error", "Generic error")
-                            }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                    Log.e("Error", t!!.message.toString())
-                }
-
-            })
-
-
-
-        //}
-
-    }
 
 
     fun isLocationEnabled(context: Context): Boolean{
@@ -110,19 +68,75 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
     }
 
+
+
     private val mLocationCallback = object : LocationCallback() {
 
         override fun onLocationResult(locationresult: LocationResult) {
-            val mLastLocation: Location = locationresult.lastLocation
-            val latitude = mLastLocation.latitude
-            Log.i("Current Latitude", "$latitude")
+            val mLastLocation = locationresult.lastLocation
+            val lat = mLastLocation.latitude
+            Log.i("Current Latitude", "$lat")
 
-            val longitude = mLastLocation.longitude
-            Log.i("Current Longitude", "$longitude")
+            val lon = mLastLocation.longitude
+            Log.i("Current Longitude", "$lon")
+
+            val response = weatherRepository.getWeather(lat, lon)
+            response.enqueue(object : Callback<WeatherResponse>{
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+                ) {
+                    if(response!!.isSuccessful)
+                    {
+                        val weatherList : WeatherResponse? = response.body() // All data
+                        // myResponse.postValue(weatherList)
+                        myResponse.value = weatherList
+                        Log.i("Response result", "$weatherList")
+                    }
+                    else
+                    {
+                        val rc = response.code()
+                        when(rc){
+                            400 ->{
+                                Log.e("Error 400", "bad connection")
+                            }
+                            404 ->{
+                                Log.e("Error 404", "not found")
+                            }
+                            else ->{
+                                Log.e("Error", "Generic error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    Log.e("Error", t!!.message.toString())
+                }
+
+            })
+
         }
 
 
+
     }
+
+
+
+
+
+    fun getWeather(){
+
+
+        //viewModelScope.launch {
+
+
+
+        //}
+
+    }
+
 
 
 }

@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
@@ -16,6 +18,7 @@ import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
+import com.alrydb.vderapp.main.utils.Constants
 
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 import com.karumi.dexter.Dexter
@@ -23,6 +26,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.security.AccessController.getContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
 
 
+
         // skapa repository
         val repository = WeatherRepository()
         val viewModelFactory = ViewModelFactory(repository)
@@ -55,12 +60,33 @@ class MainActivity : AppCompatActivity() {
 
         //skapa viewmodel
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
-        viewModel.getWeather()
+
+
+        if (Constants.isNetWorkAvailable(this))
+        {
+            viewModel.getWeather()
+        }
+        else
+        {
+            Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                Toast.makeText(
+                    this,
+                    "Kunde inte koppla upp til internet, väderdata kan inte hämtas",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }, 5000)
+
+        }
+
 
 
         viewModel.myResponse.observe(this, Observer { response ->
             Log.i("response", response.id.toString())
             Log.i("response", response.visibility.toString())
+            binding.cityName.text = response.name
+            binding.countryName.text = response.sys.country
+
+
         })
 
 
