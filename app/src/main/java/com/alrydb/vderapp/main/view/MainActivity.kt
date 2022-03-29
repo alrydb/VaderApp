@@ -85,6 +85,8 @@ class MainActivity : AppCompatActivity() {
             Log.i("response", response.visibility.toString())
             binding.cityName.text = response.name
             binding.countryName.text = response.sys.country
+            binding.currentTemp.text = "Temperatur nu: " + response.main.temp.toString().substringBefore(".") + "°C"
+
 
 
         })
