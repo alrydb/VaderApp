@@ -26,12 +26,15 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.squareup.picasso.Picasso
 import java.security.AccessController.getContext
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
+    private var currentTime : Date = Calendar.getInstance().time
 
 
     // Skapa menyn
@@ -80,12 +83,20 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        // Observera viewmodel
         viewModel.myResponse.observe(this, Observer { response ->
             Log.i("response", response.id.toString())
             Log.i("response", response.visibility.toString())
+            Log.i("response", response.weather[0].icon)
+
+            // Visa väderdata för nuvarande plats och tid
             binding.cityName.text = response.name
             binding.countryName.text = response.sys.country
-            binding.currentTemp.text = "Temperatur nu: " + response.main.temp.toString().substringBefore(".") + "°C"
+            binding.currentTemp.text = "Temp: " + response.main.temp.toString().substringBefore(".") + "°C"
+            binding.currentTime.text = currentTime.toString()
+            // Hämta ikon från api
+            val uri = "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
+            Picasso.get().load(uri).into(binding.iconWeather)
 
 
 

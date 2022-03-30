@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name"></string>
     <string name="search_title">Search</string>
+    <string name="ic_forecast">Prognos</string>
+    <string name="ic_favorite">Favoriter</string>
+    <string name="ic_settings">Inställningar</string>
 </resources>

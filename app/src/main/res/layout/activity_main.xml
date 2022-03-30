@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".main.view.MainActivity">
 
-
+    <!-- Top nav start -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_nav"
         android:layout_width="match_parent"
@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/CustomToolbarStyle"/>
+
 
     <TextView
         android:id="@+id/city_name"
@@ -50,8 +51,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_favorite_border" />
 
+    <!-- Top nav slut -->
+
+
+
     <TextView
-        android:id="@+id/current_temp"
+        android:id="@+id/current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="416dp"
@@ -64,5 +69,42 @@
         app:layout_constraintTop_toTopOf="parent"></TextView>
 
 
+    <!-- Bottom nav -->
+    <TextView
+        android:id="@+id/current_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="416dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/current_time"
+        app:layout_constraintVertical_bias="0.298"></TextView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
+
+    <ImageView
+        android:id="@+id/icon_weather"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:scaleType="fitXY"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toStartOf="@+id/current_temp"
+        app:layout_constraintTop_toTopOf="@+id/current_temp"
+        app:srcCompat="@drawable/ic_forecast" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
