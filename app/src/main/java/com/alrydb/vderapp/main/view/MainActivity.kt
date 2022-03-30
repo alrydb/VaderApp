@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
 
 
-
         // skapa repository
         val repository = WeatherRepository()
         val viewModelFactory = ViewModelFactory(repository)
@@ -65,9 +64,27 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
 
 
+        // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
+        if (networkEnabled() && locationEnabled())
+        {
+            showCurrentWeather()
+        }
+
+
+    }
+
+
+
+
+
+    private fun networkEnabled() : Boolean
+    {
+        var networkEnabled = false
+
+
         if (Constants.isNetWorkAvailable(this))
         {
-            viewModel.getWeather()
+            networkEnabled = true
         }
         else
         {
@@ -80,33 +97,14 @@ class MainActivity : AppCompatActivity() {
             }, 5000)
 
         }
+        return networkEnabled
+
+    }
 
 
-
-        // Observera viewmodel
-        viewModel.myResponse.observe(this, Observer { response ->
-            Log.i("response", response.id.toString())
-            Log.i("response", response.visibility.toString())
-            Log.i("response", response.weather[0].icon)
-
-            // Visa väderdata för nuvarande plats och tid
-            binding.cityName.text = response.name
-            binding.countryName.text = response.sys.country
-            binding.currentTemp.text = "Temp: " + response.main.temp.toString().substringBefore(".") + "°C"
-            binding.currentTime.text = currentTime.toString()
-            // Hämta ikon från api
-            val uri = "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
-            Picasso.get().load(uri).into(binding.iconWeather)
-
-
-
-        })
-
-
-
-
-
-
+    private fun locationEnabled() : Boolean
+    {
+        var locationEnabled = false
         // Kollar om platstjänsten är aktiverad
         if(!viewModel.isLocationEnabled(this)){
 
@@ -117,38 +115,39 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
 
-            }else{
-                Dexter.withContext(this).withPermissions(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-                    .withListener(object : MultiplePermissionsListener{
-                        override fun onPermissionsChecked(report: MultiplePermissionsReport?){
-                            // Om behörigheter tillåts av användaren
-                            if (report!!.areAllPermissionsGranted()){
+        }else{
+            Dexter.withContext(this).withPermissions(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+                .withListener(object : MultiplePermissionsListener{
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?){
+                        // Om behörigheter tillåts av användaren
+                        if (report!!.areAllPermissionsGranted()){
 
-                                viewModel.requestLocationData(this@MainActivity)
+                            viewModel.requestLocationData(this@MainActivity)
+                            locationEnabled = true
 
-                            }
-                            // Om behörigheter nekas av användaren
-                            if (report.isAnyPermissionPermanentlyDenied){
+                        }
+                        // Om behörigheter nekas av användaren
+                        if (report.isAnyPermissionPermanentlyDenied){
 
                             Toast.makeText(this@MainActivity, "Behörighet till mobilens platstjänst har nekats", Toast.LENGTH_SHORT).show()
 
 
-                            }                        }
+                        }                        }
 
-                        override fun onPermissionRationaleShouldBeShown(
-                            permissions: MutableList<PermissionRequest>?,
-                            token: PermissionToken?
-                        ) {
-                            showRationalDialogForPermissions()
-                        }
-                    }).onSameThread().check()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        showRationalDialogForPermissions()
+                    }
+                }).onSameThread().check()
 
 
-            }
-
+        }
+        return locationEnabled
     }
 
 
@@ -172,6 +171,33 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }.show()
     }
+
+
+    private fun showCurrentWeather()
+    {
+        // Observera viewmodel
+        viewModel.myResponse.observe(this, Observer { response ->
+            Log.i("response", response.id.toString())
+            Log.i("response", response.visibility.toString())
+            Log.i("response", response.weather[0].icon)
+
+            // Visa väderdata för nuvarande plats och tid
+            binding.cityName.text = response.name
+            binding.countryName.text = response.sys.country
+            binding.currentTemp.text = response.main.temp.toString().substringBefore(".") + "°C"
+            binding.currentTime.text = currentTime.toString()
+            binding.currentDescription.text = response.weather[0].description.replaceFirstChar {
+                response.weather[0].description[0].uppercase()
+            }
+            // Hämta ikon
+            val uri = "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
+            Picasso.get().load(uri).into(binding.iconWeather)
+
+
+
+        })
+    }
+
 
 
 
