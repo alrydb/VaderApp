@@ -66,6 +66,9 @@ dependencies {
     //Picasso - ladda in bilder från url
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    // Ladda om sida genom att swipa ner
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -27,6 +27,14 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
+    // declare a global variable of FusedLocationProviderClient
+   /* private lateinit var fusedLocationClient: FusedLocationProviderClient*/
+
+    private  var lat : Double = 0.0
+    private  var lon : Double = 0.0
+
+
+
 
 
 
@@ -35,8 +43,28 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
 
 
+  /*  @SuppressLint("MissingPermission")
+    fun getLastKnownLocation(context: Context) {
+        // in onCreate() initialize FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-    fun isLocationEnabled(context: Context): Boolean{
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    lat = location.latitude
+                    lon = location.longitude
+                    getLocationWeatherDetails()
+                }
+
+            }
+    }
+*/
+
+
+
+
+
+        fun isLocationEnabled(context: Context): Boolean{
 
 
         // Få tillgång till användarens plats
@@ -57,6 +85,9 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val mLocationRequest = create().apply {
+            interval = 10000
+            fastestInterval = 5000
+
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
@@ -70,51 +101,19 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
 
 
+
     private val mLocationCallback = object : LocationCallback() {
 
         override fun onLocationResult(locationresult: LocationResult) {
-            val mLastLocation = locationresult.lastLocation
-            val lat = mLastLocation.latitude
-            Log.i("Current Latitude", "$lat")
 
-            val lon = mLastLocation.longitude
+            val mLastLocation = locationresult.lastLocation
+            lat = mLastLocation.latitude
+            Log.i("Current Latitude", "$lat")
+            Log.i("Location time", "${locationresult.lastLocation.time}")
+            lon = mLastLocation.longitude
             Log.i("Current Longitude", "$lon")
 
-            val response = weatherRepository.getWeather(lat, lon)
-            response.enqueue(object : Callback<WeatherResponse>{
-                override fun onResponse(
-                    call: Call<WeatherResponse>,
-                    response: Response<WeatherResponse>
-                ) {
-                    if(response!!.isSuccessful)
-                    {
-                        val weatherList : WeatherResponse? = response.body() // All data
-                        // myResponse.postValue(weatherList)
-                        myResponse.value = weatherList
-                        Log.i("Response result", "$weatherList")
-                    }
-                    else
-                    {
-                        val rc = response.code()
-                        when(rc){
-                            400 ->{
-                                Log.e("Error 400", "bad connection")
-                            }
-                            404 ->{
-                                Log.e("Error 404", "not found")
-                            }
-                            else ->{
-                                Log.e("Error", "Generic error")
-                            }
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                    Log.e("Error", t!!.message.toString())
-                }
-
-            })
+            getLocationWeatherDetails()
 
         }
 
@@ -124,18 +123,56 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
 
 
+fun getLocationWeatherDetails(){
+
+    val response = weatherRepository.getWeather(lat, lon)
+    response.enqueue(object : Callback<WeatherResponse>{
+        override fun onResponse(
+            call: Call<WeatherResponse>,
+            response: Response<WeatherResponse>
+        ) {
+            if(response!!.isSuccessful)
+            {
+                val weatherList : WeatherResponse? = response.body() // All data
+                // myResponse.postValue(weatherList)
+
+                //myResponse.postValue(weatherList)
+                myResponse.value = weatherList
+                //myResponse.postValue(weatherList)
+                Log.i("Response result", "$weatherList")
+
+            }
+            else
+            {
+                val rc = response.code()
+                when(rc){
+                    400 ->{
+                        Log.e("Error 400", "bad connection")
+                    }
+                    404 ->{
+                        Log.e("Error 404", "not found")
+                    }
+                    else ->{
+                        Log.e("Error", "Generic error")
+                    }
+                }
+            }
+        }
+
+        override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+            Log.e("Error", t!!.message.toString())
+        }
+
+    })
+
+}
 
 
-    fun getWeather(){
-
-
-        //viewModelScope.launch {
 
 
 
-        //}
 
-    }
+
 
 
 
