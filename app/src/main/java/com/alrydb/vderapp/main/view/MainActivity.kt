@@ -37,14 +37,6 @@ class MainActivity : AppCompatActivity() {
     private var currentTime : Date = Calendar.getInstance().time
 
 
-    // Skapa menyn
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.options_menu, menu)
-
-
-        return true
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,58 +62,24 @@ class MainActivity : AppCompatActivity() {
         {
             showCurrentWeather()
 
-
             binding.refreshLayout.setOnRefreshListener(){
-
+                viewModel.refreshLocationData(this)
                binding.refreshLayout.isRefreshing = false
                showCurrentWeather()
-
-               /* viewModel.myResponse.removeObservers(this)
-
-                showCurrentWeather()
-                currentTime = Calendar.getInstance().time
-                binding.textTest.text = currentTime.toString()
-
-                viewModel.requestLocationData(this@MainActivity)
-                binding.textTest.text = "Refresh funkar?"
-                viewModel.myResponse.removeObservers(this)
-                viewModel.myResponse.observe(this, Observer { response ->
-
-                    Log.i("response", response.visibility.toString())
-                    Log.i("response", response.weather[0].icon)
-                    Log.i("response", response.main.temp.toString())
-
-
-                    // Visa väderdata för nuvarande plats och tid
-                    binding.cityName.text = response.name
-                    binding.countryName.text = response.sys.country
-                    binding.currentTemp.text = response.main.temp.toString().substringBefore(".") + "°C"
-                    binding.currentTime.text = currentTime.toString()
-                    binding.currentDescription.text = response.weather[0].description.replaceFirstChar {
-                        response.weather[0].description[0].uppercase()
-                    }
-                    // Hämta ikon
-                    val uri = "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
-                    Picasso.get().load(uri).into(binding.iconWeather)
-
-                })
-                recreate()
-                showCurrentWeather()
-                binding.refreshLayout.isRefreshing = false
-*/
 
             }
         }
 
-
-
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i("ON_RESUME","I AM RESUMING")
-    }
 
+    // Skapa menyn
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+
+
+        return true
+    }
 
 
     private fun networkEnabled() : Boolean
@@ -224,15 +182,11 @@ class MainActivity : AppCompatActivity() {
     private fun showCurrentWeather()
     {
         // Observera viewmodel
-        //viewModel.requestLocationData(this)
-        //viewModel.getLocationWeatherDetails()
-        //viewModel.getLastKnownLocation(this)
         viewModel.myResponse.removeObservers(this)
         viewModel.myResponse.observe(this, Observer { response ->
             Log.i("response", response.id.toString())
             Log.i("response", response.visibility.toString())
             Log.i("response", response.weather[0].icon)
-
 
 
             // Visa väderdata för nuvarande plats och tid
@@ -249,8 +203,6 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
-
-
 
 
 

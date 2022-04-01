@@ -16,7 +16,9 @@ import androidx.lifecycle.viewModelScope
 import com.alrydb.vderapp.main.data.models.WeatherResponse
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationRequest.create
+import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,42 +29,11 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
-    // declare a global variable of FusedLocationProviderClient
-   /* private lateinit var fusedLocationClient: FusedLocationProviderClient*/
 
-    private  var lat : Double = 0.0
-    private  var lon : Double = 0.0
-
-
-
-
-
+    private  var lat : Double = 0.0 // latitud
+    private  var lon : Double = 0.0 // longitud
 
     val myResponse : MutableLiveData<WeatherResponse> = MutableLiveData()
-    //lateinit var longlat : ArrayList<Double>
-
-
-
-  /*  @SuppressLint("MissingPermission")
-    fun getLastKnownLocation(context: Context) {
-        // in onCreate() initialize FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    lat = location.latitude
-                    lon = location.longitude
-                    getLocationWeatherDetails()
-                }
-
-            }
-    }
-*/
-
-
-
-
 
         fun isLocationEnabled(context: Context): Boolean{
 
@@ -78,6 +49,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
     }
 
 
+    // Process som körs i bakgrunden som hämtar mobilens plats var n:e sekund (n avgörs av värdet på interval)
     @SuppressLint("MissingPermission")
     fun requestLocationData(context: Context){
 
@@ -85,10 +57,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val mLocationRequest = create().apply {
-            interval = 10000
-            fastestInterval = 5000
+            interval = 5000
+            fastestInterval = 10000
 
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = PRIORITY_HIGH_ACCURACY
         }
 
 
@@ -97,8 +69,26 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
             Looper.getMainLooper()
         )
 
+
+
     }
 
+
+    // Funktion som manuellt uppdaterar mobilens plats, anropas när användaren "refreshar" appen
+    @SuppressLint("MissingPermission")
+    fun refreshLocationData(context: Context){
+
+        mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+        val cancellationTokenSource = CancellationTokenSource()
+        val currentLocation =  mfusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token).addOnSuccessListener{ task ->
+            lat = task.latitude
+            lon = task.longitude
+            getLocationWeatherDetails()
+        }
+
+
+    }
 
 
 
@@ -166,13 +156,6 @@ fun getLocationWeatherDetails(){
     })
 
 }
-
-
-
-
-
-
-
 
 
 

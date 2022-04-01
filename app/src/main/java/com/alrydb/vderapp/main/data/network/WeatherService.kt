@@ -16,4 +16,6 @@ interface WeatherService {
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
     ) : Call<WeatherResponse> // Returnera ett WeatherResponse GSON-objekt
+
+
 }
