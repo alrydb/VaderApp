@@ -3,7 +3,6 @@ package com.alrydb.vderapp.main.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
 
 //import android.location.LocationRequest
@@ -12,14 +11,13 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import com.alrydb.vderapp.main.data.models.Forecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationRequest.create
 import com.google.android.gms.tasks.CancellationTokenSource
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,7 +31,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
     private  var lat : Double = 0.0 // latitud
     private  var lon : Double = 0.0 // longitud
 
-    val myResponse : MutableLiveData<WeatherResponse> = MutableLiveData()
+    val currentWeatherList : MutableLiveData<WeatherResponse> = MutableLiveData()
 
         fun isLocationEnabled(context: Context): Boolean{
 
@@ -127,7 +125,7 @@ fun getLocationWeatherDetails(){
                 // myResponse.postValue(weatherList)
 
                 //myResponse.postValue(weatherList)
-                myResponse.value = weatherList
+                currentWeatherList.value = weatherList
                 //myResponse.postValue(weatherList)
                 Log.i("Response result", "$weatherList")
 
@@ -156,6 +154,27 @@ fun getLocationWeatherDetails(){
     })
 
 }
+
+
+
+    fun getLocationForecastDetails(){
+
+        val response = weatherRepository.getForecast(lat, lon)
+        response.enqueue(object : Callback <Forecast>{
+            override fun onResponse(call: Call<Forecast>, response: Response<Forecast>) {
+
+                val forecastList : Forecast? = response.body()
+                Log.i("Response result", "$forecastList")
+            }
+
+            override fun onFailure(call: Call<Forecast>, t: Throwable) {
+                Log.e("Forecast error", t!!.message.toString())
+            }
+
+
+        })
+
+    }
 
 
 

@@ -1,6 +1,7 @@
 package com.alrydb.vderapp.main.data.repo
 
 import android.util.Log
+import com.alrydb.vderapp.main.data.models.Forecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
 import com.alrydb.vderapp.main.data.network.RetrofitInstance
 import com.alrydb.vderapp.main.utils.Constants
@@ -20,6 +21,13 @@ class WeatherRepository() {
 
           Log.i("response", "GETWEATHER CALLEWD FROM REPO")
         return RetrofitInstance.weatherApi.getWeather(lat, lon, Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG)
+
+    }
+
+    fun getForecast(lat : Double, lon : Double): Call<Forecast> {
+
+        Log.i("response", "GETFORECAST CALLEWD FROM REPO")
+        return RetrofitInstance.weatherApi.getForecast(lat, lon, Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG)
 
     }
 

@@ -27,7 +27,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
-import java.security.AccessController.getContext
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -66,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.refreshLocationData(this)
                binding.refreshLayout.isRefreshing = false
                showCurrentWeather()
+
 
             }
         }
@@ -182,8 +182,8 @@ class MainActivity : AppCompatActivity() {
     private fun showCurrentWeather()
     {
         // Observera viewmodel
-        viewModel.myResponse.removeObservers(this)
-        viewModel.myResponse.observe(this, Observer { response ->
+        viewModel.currentWeatherList.removeObservers(this)
+        viewModel.currentWeatherList.observe(this, Observer { response ->
             Log.i("response", response.id.toString())
             Log.i("response", response.visibility.toString())
             Log.i("response", response.weather[0].icon)
