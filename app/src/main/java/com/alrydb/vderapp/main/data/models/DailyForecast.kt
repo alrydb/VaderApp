@@ -3,7 +3,7 @@ package com.alrydb.vderapp.main.data.models
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Forecast(
+data class DailyForecast(
 
 
     val list: List<WeatherResponse>,

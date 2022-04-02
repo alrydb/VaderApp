@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.ViewModelFactory
+import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.alrydb.vderapp.main.utils.Constants
 
@@ -48,8 +49,9 @@ class MainActivity : AppCompatActivity() {
 
 
         // skapa repository
-        val repository = WeatherRepository()
-        val viewModelFactory = ViewModelFactory(repository)
+        val weatherRepository = WeatherRepository()
+        val dailyForecastRepository = DailyForecastRepository()
+        val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
 
 
         //skapa viewmodel
@@ -183,24 +185,33 @@ class MainActivity : AppCompatActivity() {
     {
         // Observera viewmodel
         viewModel.currentWeatherList.removeObservers(this)
-        viewModel.currentWeatherList.observe(this, Observer { response ->
-            Log.i("response", response.id.toString())
-            Log.i("response", response.visibility.toString())
-            Log.i("response", response.weather[0].icon)
+        viewModel.currentWeatherList.observe(this, Observer { weatherResponse ->
+            Log.i("response", weatherResponse.id.toString())
+            Log.i("response", weatherResponse.visibility.toString())
+            Log.i("response", weatherResponse.weather[0].icon)
 
 
             // Visa väderdata för nuvarande plats och tid
-            binding.cityName.text = response.name
-            binding.countryName.text = response.sys.country
-            binding.currentTemp.text = response.main.temp.toString().substringBefore(".") + "°C"
+            binding.cityName.text = weatherResponse.name
+            binding.countryName.text = weatherResponse.sys.country
+            binding.currentTemp.text = weatherResponse.main.temp.toString().substringBefore(".") + "°C"
             binding.currentTime.text = currentTime.toString()
-            binding.currentDescription.text = response.weather[0].description.replaceFirstChar {
-                response.weather[0].description[0].uppercase()
+            binding.currentDescription.text = weatherResponse.weather[0].description.replaceFirstChar {
+                weatherResponse.weather[0].description[0].uppercase()
             }
             // Hämta ikon
-            val uri = "https://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
+            val uri = "https://openweathermap.org/img/w/" + weatherResponse.weather[0].icon + ".png"
             Picasso.get().load(uri).into(binding.iconWeather)
 
+        })
+    }
+
+
+    private fun showDailyForecast()
+    {
+        viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
+
+                // TODO: Skapa prognosobjekt?
         })
     }
 

@@ -11,8 +11,9 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.alrydb.vderapp.main.data.models.Forecast
+import com.alrydb.vderapp.main.data.models.DailyForecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -22,7 +23,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): AndroidViewModel(Application()) {
+class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository): AndroidViewModel(Application()) {
 
 
 
@@ -32,6 +33,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
     private  var lon : Double = 0.0 // longitud
 
     val currentWeatherList : MutableLiveData<WeatherResponse> = MutableLiveData()
+    val dailyForecastList : MutableLiveData<DailyForecast> = MutableLiveData()
 
         fun isLocationEnabled(context: Context): Boolean{
 
@@ -83,6 +85,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository): An
             lat = task.latitude
             lon = task.longitude
             getLocationWeatherDetails()
+            getLocationForecastDetails()
         }
 
 
@@ -159,16 +162,18 @@ fun getLocationWeatherDetails(){
 
     fun getLocationForecastDetails(){
 
-        val response = weatherRepository.getForecast(lat, lon)
-        response.enqueue(object : Callback <Forecast>{
-            override fun onResponse(call: Call<Forecast>, response: Response<Forecast>) {
+        val response = dailyForecastRepository.getDailyForecast(lat, lon)
+        response.enqueue(object : Callback <DailyForecast>{
+            override fun onResponse(call: Call<DailyForecast>, response: Response<DailyForecast>) {
 
-                val forecastList : Forecast? = response.body()
+                val forecastList : DailyForecast? = response.body()
+                dailyForecastList.value = forecastList
+
                 Log.i("Response result", "$forecastList")
             }
 
-            override fun onFailure(call: Call<Forecast>, t: Throwable) {
-                Log.e("Forecast error", t!!.message.toString())
+            override fun onFailure(call: Call<DailyForecast>, t: Throwable) {
+                Log.e("DailyForecast error", t!!.message.toString())
             }
 
 
