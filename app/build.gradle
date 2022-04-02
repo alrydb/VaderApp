@@ -69,6 +69,10 @@ dependencies {
     // Ladda om sida genom att swipa ner
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
+    // Recyclerview
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

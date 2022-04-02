@@ -14,9 +14,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.ViewModelFactory
+import com.alrydb.vderapp.main.data.models.WeatherResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.alrydb.vderapp.main.utils.Constants
@@ -29,11 +31,15 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
+    lateinit var forecastList : MutableList<WeatherResponse>
+    lateinit var adapter : DailyForecastAdapter
+
     private var currentTime : Date = Calendar.getInstance().time
 
 
@@ -46,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarNav)
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
+
+
 
 
         // skapa repository
@@ -65,8 +73,9 @@ class MainActivity : AppCompatActivity() {
 
             binding.refreshLayout.setOnRefreshListener(){
                 viewModel.refreshLocationData(this)
-               binding.refreshLayout.isRefreshing = false
-               showCurrentWeather()
+                binding.refreshLayout.isRefreshing = false
+                showCurrentWeather()
+                //showDailyForecast()
 
 
             }
@@ -211,8 +220,26 @@ class MainActivity : AppCompatActivity() {
     {
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
 
-                // TODO: Skapa prognosobjekt?
+
+
+                Log.i("Response yee", "${dailyForecastResponse.list[0]}")
+                forecastList = mutableListOf()
+                forecastList.add(dailyForecastResponse.list[0])
+                forecastList.add(dailyForecastResponse.list[1])
+                forecastList.add(dailyForecastResponse.list[2])
+                forecastList.add(dailyForecastResponse.list[3])
+                forecastList.add(dailyForecastResponse.list[4])
+
+
+                binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                binding?.forecastRv?.adapter = DailyForecastAdapter(forecastList)
+
+
+
+
+
         })
+
     }
 
 
