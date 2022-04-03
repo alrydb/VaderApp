@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val dailyForecastRepository = DailyForecastRepository()
         val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
 
+        // test github laptop
 
         //skapa viewmodel
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.refreshLocationData(this)
                 binding.refreshLayout.isRefreshing = false
                 showCurrentWeather()
-                //showDailyForecast()
+                showDailyForecast()
 
 
             }
