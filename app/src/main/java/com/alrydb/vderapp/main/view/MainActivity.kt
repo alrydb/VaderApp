@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
-    lateinit var forecastList : MutableList<WeatherResponse>
+    //lateinit var forecastList : MutableList<WeatherResponse>
     lateinit var adapter : DailyForecastAdapter
 
     private var currentTime : Date = Calendar.getInstance().time
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val dailyForecastRepository = DailyForecastRepository()
         val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
 
-        // test github laptop
+
 
         //skapa viewmodel
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
@@ -224,16 +224,16 @@ class MainActivity : AppCompatActivity() {
 
 
                 Log.i("Response yee", "${dailyForecastResponse.list[0]}")
-                forecastList = mutableListOf()
-                forecastList.add(dailyForecastResponse.list[0])
-                forecastList.add(dailyForecastResponse.list[1])
-                forecastList.add(dailyForecastResponse.list[2])
-                forecastList.add(dailyForecastResponse.list[3])
-                forecastList.add(dailyForecastResponse.list[4])
+                //forecastList = mutableListOf()
+                //forecastList.add(dailyForecastResponse.list[0])
+                //forecastList.add(dailyForecastResponse.list[1])
+                //forecastList.add(dailyForecastResponse.list[2])
+                //forecastList.add(dailyForecastResponse.list[3])
+                //forecastList.add(dailyForecastResponse.list[4])
 
 
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                binding?.forecastRv?.adapter = DailyForecastAdapter(forecastList)
+                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
 
 

@@ -4,20 +4,24 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alrydb.vderapp.databinding.ForecastItemBinding
+import com.alrydb.vderapp.main.data.models.DailyForecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
 
 
-class DailyForecastAdapter(val forecastList : List<WeatherResponse>) : RecyclerView.Adapter<DailyForecastAdapter.MainViewHolder>() {
+class DailyForecastAdapter(val dailyForecast : DailyForecast) : RecyclerView.Adapter<DailyForecastAdapter.MainViewHolder>() {
 
     inner class MainViewHolder(val itemBinding: ForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
         fun bindItem(weatherResponse: WeatherResponse)
         {
-            for (weatherResponse in forecastList)
-            {
-                itemBinding.dateTv.text = weatherResponse.name
-                itemBinding.iconForecast.text = weatherResponse.main.temp.toString()
-            }
+
+           // for (weatherResponse in dailyForecast.list)
+           // {
+                    itemBinding.tvDate.text = weatherResponse.main.temp_max.toString()
+                    itemBinding.tvTvTemp.text = weatherResponse.main.temp_min.toString()
+
+
+            //}
 
         }
     }
@@ -27,12 +31,12 @@ class DailyForecastAdapter(val forecastList : List<WeatherResponse>) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        val forecast = forecastList[position]
+        val forecast = dailyForecast.list[position]
         holder.bindItem(forecast)
     }
 
     override fun getItemCount(): Int {
-        return forecastList.size
+        return dailyForecast.list.size
     }
 
 

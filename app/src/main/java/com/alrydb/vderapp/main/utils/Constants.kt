@@ -15,6 +15,8 @@ object Constants{
     const val BASE_URL : String = "https://api.openweathermap.org/data/"
     // Språk för beskrivning av väder och namn på städer
     const val LANG: String = "se"
+    // Antalet dagsprognoser som ska hämtas
+    const val FORECAST_COUNT = 10
 
     const val METRIC_UNIT : String = "metric"
 

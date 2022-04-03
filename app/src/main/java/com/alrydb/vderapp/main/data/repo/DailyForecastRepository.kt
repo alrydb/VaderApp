@@ -11,7 +11,7 @@ class DailyForecastRepository {
     fun getDailyForecast(lat : Double, lon : Double): Call<DailyForecast> {
 
         Log.i("response", "GETFORECAST CALLED FROM REPO")
-        return RetrofitInstance.weatherApi.getDailyForecast(lat, lon, Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG)
+        return RetrofitInstance.weatherApi.getDailyForecast(lat, lon, Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG, Constants.FORECAST_COUNT)
 
     }
 

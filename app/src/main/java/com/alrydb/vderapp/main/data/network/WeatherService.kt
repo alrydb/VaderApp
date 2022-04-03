@@ -27,5 +27,6 @@ interface WeatherService {
         @Query("units") units: String?,
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
+        @Query("cnt") cnt : Int,
     ) : Call<DailyForecast> // Returnera ett DailyForecast GSON-objekt
 }
