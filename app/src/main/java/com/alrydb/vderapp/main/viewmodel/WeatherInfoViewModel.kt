@@ -11,8 +11,9 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.alrydb.vderapp.main.data.models.DailyForecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
@@ -33,7 +34,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     private  var lon : Double = 0.0 // longitud
 
     val currentWeatherList : MutableLiveData<WeatherResponse> = MutableLiveData()
-    val dailyForecastList : MutableLiveData<DailyForecast> = MutableLiveData()
+    val dailyForecastList : MutableLiveData<DailyForecastResponse> = MutableLiveData()
 
         fun isLocationEnabled(context: Context): Boolean{
 
@@ -163,16 +164,16 @@ fun getLocationWeatherDetails(){
     fun getLocationForecastDetails(){
 
         val response = dailyForecastRepository.getDailyForecast(lat, lon)
-        response.enqueue(object : Callback <DailyForecast>{
-            override fun onResponse(call: Call<DailyForecast>, response: Response<DailyForecast>) {
+        response.enqueue(object : Callback <DailyForecastResponse>{
+            override fun onResponse(call: Call<DailyForecastResponse>, response: Response<DailyForecastResponse>) {
 
-                val forecastList : DailyForecast? = response.body()
+                val forecastList : DailyForecastResponse? = response.body()
                 dailyForecastList.value = forecastList
 
                 Log.i("Response result", "$forecastList")
             }
 
-            override fun onFailure(call: Call<DailyForecast>, t: Throwable) {
+            override fun onFailure(call: Call<DailyForecastResponse>, t: Throwable) {
                 Log.e("DailyForecast error", t!!.message.toString())
             }
 

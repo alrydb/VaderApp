@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-                Log.i("Response yee", "${dailyForecastResponse.list[0]}")
+                Log.i("Response yee", "${dailyForecastResponse.daily[0]}")
                 //forecastList = mutableListOf()
                 //forecastList.add(dailyForecastResponse.list[0])
                 //forecastList.add(dailyForecastResponse.list[1])

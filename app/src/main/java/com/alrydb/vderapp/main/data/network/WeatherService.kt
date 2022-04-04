@@ -1,7 +1,9 @@
 package com.alrydb.vderapp.main.data.network
 
-import com.alrydb.vderapp.main.data.models.DailyForecast
+import com.alrydb.vderapp.main.data.models.Forecast
 import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -28,5 +30,18 @@ interface WeatherService {
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
         @Query("cnt") cnt : Int,
-    ) : Call<DailyForecast> // Returnera ett DailyForecast GSON-objekt
+    ) : Call<Forecast> // Returnera ett DailyForecast GSON-objekt
+
+
+    @GET("2.5/onecall")
+    fun getForecast(
+        @Query("lat") lat : Double,
+        @Query("lon") lon : Double,
+        @Query("exclude") exclude : String?,
+        @Query("units") units: String?,
+        @Query("appid") appid : String?,
+        @Query("lang") lang : String?,
+
+    ) : Call<DailyForecastResponse> // Returnera ett DailyForecast GSON-objekt
+
 }
