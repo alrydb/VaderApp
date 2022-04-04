@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     //lateinit var forecastList : MutableList<WeatherResponse>
     lateinit var adapter : DailyForecastAdapter
 
-    private var currentTime : Date = Calendar.getInstance().time
+    //private var currentTime : Date = Calendar.getInstance().time
 
 
 
@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
             binding.cityName.text = weatherResponse.name
             binding.countryName.text = weatherResponse.sys.country
             binding.currentTemp.text = weatherResponse.main.temp.toString().substringBefore(".") + "°C"
-            binding.currentTime.text = currentTime.toString()
+            //binding.currentTime.text = currentTime.toString()
             binding.currentDescription.text = weatherResponse.weather[0].description.replaceFirstChar {
                 weatherResponse.weather[0].description[0].uppercase()
             }

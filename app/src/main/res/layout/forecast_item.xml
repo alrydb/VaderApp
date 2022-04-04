@@ -26,11 +26,11 @@
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="24dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_day"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Date" />
 
@@ -50,12 +50,12 @@
         android:id="@+id/tv_tv_temp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="256dp"
         android:layout_marginTop="24dp"
         android:layout_weight="1"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_weather_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Temps" />
 

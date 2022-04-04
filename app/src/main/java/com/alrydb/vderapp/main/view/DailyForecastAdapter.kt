@@ -3,7 +3,9 @@ package com.alrydb.vderapp.main.view
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ForecastItemBinding
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
@@ -16,6 +18,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
 
     inner class MainViewHolder(val itemBinding: ForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
+        val g : Double = 0.0
         fun bindItem(dailyForecast: DailyForecast)
         {
 
@@ -39,11 +42,15 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
                 val weekdayDateName = weekdayDate.format(calendar.time)
                 val monthDate = SimpleDateFormat("MMMM")
                 val monthName = monthDate.format(calendar.time)
-                val dayDate = SimpleDateFormat("dd")
+                val dayDate = SimpleDateFormat("d")
                 val dayName = dayDate.format(calendar.time)
                     itemBinding.tvDay.text = weekdayDateName + " "
-                    itemBinding.tvDate.text =  monthName + " " + dayName
-                    itemBinding.tvTvTemp.text = dailyForecast.temp.min.toString()
+                    itemBinding.tvDate.text =  dayName + " " + monthName
+                    itemBinding.tvTvTemp.text = dailyForecast.temp.max.toString()
+
+
+
+
 
 
 
@@ -59,6 +66,21 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val forecast = dailyForecastResponse.daily[position]
         holder.bindItem(forecast)
+
+        // Varannan rad får ljusblå bakgrund istället för vit
+        if (position % 2 == 0) {
+            holder.itemBinding.root.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.colorAccent
+                )
+            )
+        } else {
+            holder.itemBinding.root.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.colorLightGray))
+        }
+
+
+
     }
 
     override fun getItemCount(): Int {

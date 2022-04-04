@@ -5,6 +5,7 @@
     android:id="@+id/parent_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".main.view.MainActivity">
 
     <!-- Top nav start -->
@@ -13,10 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
+        android:theme="@style/CustomToolbarStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:theme="@style/CustomToolbarStyle"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -59,10 +60,8 @@
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="56dp"
-        tools:layout_editor_absoluteY="0dp">
-
-
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="40dp">
 
 
         <TextView
@@ -72,8 +71,8 @@
             android:layout_marginBottom="416dp"
             android:gravity="center"
             android:text="Test"
-            android:visibility="invisible"
             android:textSize="20sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -86,49 +85,50 @@
         android:id="@+id/current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="416dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
-        android:text="TextView"
+        android:text="@string/weather_current"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_nav" />
 
 
     <TextView
         android:id="@+id/current_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="416dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="TextView"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/current_time"
-        app:layout_constraintVertical_bias="0.298"></TextView>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_time" />
 
     <ImageView
         android:id="@+id/icon_weather"
         android:layout_width="64sp"
         android:layout_height="64sp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="-256dp"
         android:scaleType="fitXY"
-        app:layout_constraintEnd_toStartOf="@+id/current_temp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/current_temp" />
 
     <TextView
         android:id="@+id/current_description"
-        android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/icon_weather"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_temp" />
 
 
@@ -144,7 +144,6 @@
 
 
     </androidx.recyclerview.widget.RecyclerView>
-
 
 
     <!-- Bottom nav -->

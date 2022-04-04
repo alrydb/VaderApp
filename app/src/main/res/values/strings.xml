@@ -4,4 +4,5 @@
     <string name="ic_forecast">Prognos</string>
     <string name="ic_favorite">Favoriter</string>
     <string name="ic_settings">Inställningar</string>
+    <string name="weather_current">Just nu</string>
 </resources>
