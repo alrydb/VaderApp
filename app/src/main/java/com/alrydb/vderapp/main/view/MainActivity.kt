@@ -17,11 +17,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
-import com.alrydb.vderapp.main.ViewModelFactory
-import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.alrydb.vderapp.main.utils.Constants
+import com.alrydb.vderapp.main.utils.NetworkController
 
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 import com.karumi.dexter.Dexter
@@ -30,19 +30,21 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
-    //lateinit var forecastList : MutableList<WeatherResponse>
+
     lateinit var adapter : DailyForecastAdapter
 
-    //private var currentTime : Date = Calendar.getInstance().time
 
+    // Skapa menyn
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
 
+        return true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,13 +56,11 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
 
 
-
-
         // skapa repository
         val weatherRepository = WeatherRepository()
         val dailyForecastRepository = DailyForecastRepository()
-        val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
 
+        val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
 
 
         //skapa viewmodel
@@ -73,25 +73,33 @@ class MainActivity : AppCompatActivity() {
             showCurrentWeather()
             showDailyForecast()
 
-            binding.refreshLayout.setOnRefreshListener(){
-                viewModel.refreshLocationData(this)
-                binding.refreshLayout.isRefreshing = false
-                showCurrentWeather()
-                showDailyForecast()
-
-
-            }
         }
 
-    }
+        // När användaren refreshar appen
+        binding.refreshLayout.setOnRefreshListener(){
+
+           if (networkEnabled() && locationEnabled())
+           {
+               binding.refreshLayout.isRefreshing = false
+               showCurrentWeather()
+               showDailyForecast()
+           }
+            else if (!locationEnabled())
+           {
+               binding.refreshLayout.isRefreshing = false
+               Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
+
+            }
+            else if (!networkEnabled())
+           {
+               binding.refreshLayout.isRefreshing = false
+               Toast.makeText(this, "Kunde inte koppla upp till internet, väderdata kan inte hämtas", Toast.LENGTH_SHORT).show()
+            }
 
 
-    // Skapa menyn
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.options_menu, menu)
+        }
 
 
-        return true
     }
 
 
@@ -100,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         var networkEnabled = false
 
 
-        if (Constants.isNetWorkAvailable(this))
+        if (NetworkController.isNetWorkAvailable(this))
         {
             networkEnabled = true
         }
@@ -109,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             Handler(Looper.getMainLooper()).postDelayed(Runnable {
                 Toast.makeText(
                     this,
-                    "Kunde inte koppla upp til internet, väderdata kan inte hämtas",
+                    "Kunde inte koppla upp till internet, väderdata kan inte hämtas",
                     Toast.LENGTH_SHORT
                 ).show()
             }, 5000)
@@ -146,6 +154,10 @@ class MainActivity : AppCompatActivity() {
                             viewModel.requestLocationData(this@MainActivity)
                                 //viewModel.getLastKnownLocation(this@MainActivity)
                             locationEnabled = true
+
+
+                            showCurrentWeather()
+                            showDailyForecast()
 
                         }
                         // Om behörigheter nekas av användaren
@@ -206,7 +218,6 @@ class MainActivity : AppCompatActivity() {
             binding.cityName.text = weatherResponse.name
             binding.countryName.text = weatherResponse.sys.country
             binding.currentTemp.text = weatherResponse.main.temp.toString().substringBefore(".") + "°C"
-            //binding.currentTime.text = currentTime.toString()
             binding.currentDescription.text = weatherResponse.weather[0].description.replaceFirstChar {
                 weatherResponse.weather[0].description[0].uppercase()
             }
@@ -220,25 +231,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showDailyForecast()
     {
+        // Visa 7 dagars-prognos för nuvarande plats
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
-
-
-
-                Log.i("Response yee", "${dailyForecastResponse.daily[0]}")
-                //forecastList = mutableListOf()
-                //forecastList.add(dailyForecastResponse.list[0])
-                //forecastList.add(dailyForecastResponse.list[1])
-                //forecastList.add(dailyForecastResponse.list[2])
-                //forecastList.add(dailyForecastResponse.list[3])
-                //forecastList.add(dailyForecastResponse.list[4])
-
-
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+                // Skicka data som hämtas från api:n till adaptern
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
-
-
-
-
 
         })
 

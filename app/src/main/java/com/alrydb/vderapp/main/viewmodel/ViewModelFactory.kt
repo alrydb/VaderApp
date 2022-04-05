@@ -1,10 +1,9 @@
-package com.alrydb.vderapp.main
+package com.alrydb.vderapp.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
-import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
 
 class ViewModelFactory (private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository )
     : ViewModelProvider.Factory {

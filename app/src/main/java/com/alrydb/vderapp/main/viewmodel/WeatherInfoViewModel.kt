@@ -11,8 +11,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.alrydb.vderapp.main.data.models.WeatherResponse
-import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
+import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
@@ -58,8 +57,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val mLocationRequest = create().apply {
-            interval = 350000
-            fastestInterval = 60000
+            interval = 60000
+            fastestInterval = 30000
 
             priority = PRIORITY_HIGH_ACCURACY
         }

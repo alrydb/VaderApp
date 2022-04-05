@@ -1,7 +1,7 @@
 package com.alrydb.vderapp.main.data.repo
 
 import android.util.Log
-import com.alrydb.vderapp.main.data.models.WeatherResponse
+import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.network.RetrofitInstance
 import com.alrydb.vderapp.main.utils.Constants
 import retrofit2.Call

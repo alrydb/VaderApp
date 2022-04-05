@@ -1,6 +1,5 @@
-package com.alrydb.vderapp.main.data.models
+package com.alrydb.vderapp.main.data.models.weather
 
-import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class Forecast(

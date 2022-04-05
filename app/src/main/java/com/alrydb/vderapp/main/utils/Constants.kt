@@ -15,43 +15,12 @@ object Constants{
     const val BASE_URL : String = "https://api.openweathermap.org/data/"
     // Språk för beskrivning av väder och namn på städer
     const val LANG: String = "se"
-    // Antalet dagsprognoser som ska hämtas
-    const val FORECAST_COUNT = 10
+
 
     const val METRIC_UNIT : String = "metric"
 
 
-    fun isNetWorkAvailable(context: Context) : Boolean{
-        val connectivityManager : ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            // Returnera false om vi inte kan koppla upp oss till internet
-            val network = connectivityManager.activeNetwork ?: return false
-
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-
-            // 'when' fungerar som en switch i andra språk
-            return when {
-                //Returnera true om vi får internetuppkoppling genom, wifi, mobilnät eller ethernet
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
-            }
-        }
-        else{
-            // Gamla sättet att koppla appen till internet
-
-            val networkInfo = connectivityManager.activeNetworkInfo
-            return networkInfo != null && networkInfo.isConnectedOrConnecting
-
-
-        }
-
-
-    }
 
 
 

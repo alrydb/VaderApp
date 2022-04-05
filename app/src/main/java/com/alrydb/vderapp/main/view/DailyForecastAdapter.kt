@@ -18,45 +18,28 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
 
     inner class MainViewHolder(val itemBinding: ForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
-        val g : Double = 0.0
+
         fun bindItem(dailyForecast: DailyForecast)
         {
 
-           // for (weatherResponse in dailyForecast.list)
-           // {
-                    val uri = "https://openweathermap.org/img/w/" + dailyForecast.weather[0].icon + ".png"
-                    Picasso.get().load(uri).into(itemBinding.ivWeatherIcon)
+            val uri = "https://openweathermap.org/img/w/" + dailyForecast.weather[0].icon + ".png"
+            Picasso.get().load(uri).into(itemBinding.ivWeatherIcon)
+
             val calendar: Calendar = Calendar.getInstance()
             Log.i("time", "${dailyForecast.dt}")
             calendar.setTimeInMillis((dailyForecast.dt * 1000L))
 
+            val weekdayDate = SimpleDateFormat("E")
+            val weekdayDateName = weekdayDate.format(calendar.time)
+            val monthDate = SimpleDateFormat("MMMM")
+            val monthName = monthDate.format(calendar.time)
+            val dayDate = SimpleDateFormat("d")
+            val dayName = dayDate.format(calendar.time)
 
-               /* val year: Int = calendar.get(Calendar.YEAR)
-                val month: Int = calendar.get(Calendar.MONTH)
-                val day: Int = calendar.get(Calendar.DAY_OF_MONTH)*/
-
-                //val simpleDateFormat = SimpleDateFormat("MM", Locale.ENGLISH)
-
-                //val date = simpleDateFormat.parse(month.toString())
-                val weekdayDate = SimpleDateFormat("E")
-                val weekdayDateName = weekdayDate.format(calendar.time)
-                val monthDate = SimpleDateFormat("MMMM")
-                val monthName = monthDate.format(calendar.time)
-                val dayDate = SimpleDateFormat("d")
-                val dayName = dayDate.format(calendar.time)
-                    itemBinding.tvDay.text = weekdayDateName + " "
-                    itemBinding.tvDate.text =  dayName + " " + monthName
-                    itemBinding.tvTempMax.text = dailyForecast.temp.max.toString().substringBefore(".") + "°C"
-                    itemBinding.tvTempMin.text = dailyForecast.temp.min.toString().substringBefore(".") + "°C"
-
-
-
-
-
-
-
-            //}
-
+            itemBinding.tvDay.text = weekdayDateName + " "
+            itemBinding.tvDate.text =  dayName + " " + monthName
+            itemBinding.tvTempMax.text = dailyForecast.temp.max.toString().substringBefore(".") + "°C"
+            itemBinding.tvTempMin.text = dailyForecast.temp.min.toString().substringBefore(".") + "°C"
         }
     }
 
@@ -68,7 +51,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
         val forecast = dailyForecastResponse.daily[position]
         holder.bindItem(forecast)
 
-        // Varannan rad får ljusblå bakgrund istället för vit
+        // Varannan rad får ljusgrå bakgrund istället för vit
         if (position % 2 == 0) {
             holder.itemBinding.root.setBackgroundColor(
                 ContextCompat.getColor(
