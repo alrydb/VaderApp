@@ -5,4 +5,6 @@
     <string name="ic_favorite">Favoriter</string>
     <string name="ic_settings">Inställningar</string>
     <string name="weather_current">Just nu</string>
+    <string name="temp_max">Max</string>
+    <string name="temp_min">Min</string>
 </resources>

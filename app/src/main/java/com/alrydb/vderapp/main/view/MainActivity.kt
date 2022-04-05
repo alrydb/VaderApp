@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         if (networkEnabled() && locationEnabled())
         {
             showCurrentWeather()
+            showDailyForecast()
 
             binding.refreshLayout.setOnRefreshListener(){
                 viewModel.refreshLocationData(this)

@@ -58,8 +58,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val mLocationRequest = create().apply {
-            interval = 5000
-            fastestInterval = 10000
+            interval = 350000
+            fastestInterval = 60000
 
             priority = PRIORITY_HIGH_ACCURACY
         }
@@ -106,6 +106,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             Log.i("Current Longitude", "$lon")
 
             getLocationWeatherDetails()
+            getLocationForecastDetails()
 
         }
 

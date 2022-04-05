@@ -46,7 +46,8 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
                 val dayName = dayDate.format(calendar.time)
                     itemBinding.tvDay.text = weekdayDateName + " "
                     itemBinding.tvDate.text =  dayName + " " + monthName
-                    itemBinding.tvTvTemp.text = dailyForecast.temp.max.toString()
+                    itemBinding.tvTempMax.text = dailyForecast.temp.max.toString().substringBefore(".") + "°C"
+                    itemBinding.tvTempMin.text = dailyForecast.temp.min.toString().substringBefore(".") + "°C"
 
 
 
@@ -72,11 +73,11 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
             holder.itemBinding.root.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    R.color.colorAccent
+                    R.color.colorLightGray
                 )
             )
         } else {
-            holder.itemBinding.root.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.colorLightGray))
+            holder.itemBinding.root.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
         }
 
 
