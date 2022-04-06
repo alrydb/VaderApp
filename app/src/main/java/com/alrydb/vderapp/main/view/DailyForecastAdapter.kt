@@ -19,9 +19,9 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
     inner class MainViewHolder(val itemBinding: ForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
 
+        // Vad varje rad i recyclerviewen ska innehålla
         fun bindItem(dailyForecast: DailyForecast)
         {
-
             val uri = "https://openweathermap.org/img/w/" + dailyForecast.weather[0].icon + ".png"
             Picasso.get().load(uri).into(itemBinding.ivWeatherIcon)
 
@@ -49,6 +49,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val forecast = dailyForecastResponse.daily[position]
+        // Tilldelar varje rad i recyclerviewen rätt innehåll
         holder.bindItem(forecast)
 
         // Varannan rad får ljusgrå bakgrund istället för vit

@@ -49,7 +49,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    // Process som körs i bakgrunden som hämtar mobilens plats var n:e sekund (n avgörs av värdet på interval)
+    // Process som körs i bakgrunden som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
     @SuppressLint("MissingPermission")
     fun requestLocationData(context: Context){
 
@@ -81,9 +81,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val cancellationTokenSource = CancellationTokenSource()
-        val currentLocation =  mfusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token).addOnSuccessListener{ task ->
+        mfusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token).addOnSuccessListener{ task ->
             lat = task.latitude
             lon = task.longitude
+
             getLocationWeatherDetails()
             getLocationForecastDetails()
         }
@@ -118,19 +119,21 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 fun getLocationWeatherDetails(){
 
     val response = weatherRepository.getWeather(lat, lon)
+
     response.enqueue(object : Callback<WeatherResponse>{
+
+        //Lyckat api-anrop
         override fun onResponse(
             call: Call<WeatherResponse>,
             response: Response<WeatherResponse>
         ) {
             if(response!!.isSuccessful)
             {
-                val weatherList : WeatherResponse? = response.body() // All data
-                // myResponse.postValue(weatherList)
+                // All data från vårt gson objekt, dvs vår deserialiserade json data
+                val weatherList : WeatherResponse? = response.body()
 
-                //myResponse.postValue(weatherList)
+                // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan får tillgång till
                 currentWeatherList.value = weatherList
-                //myResponse.postValue(weatherList)
                 Log.i("Response result", "$weatherList")
 
             }

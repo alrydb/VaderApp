@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter : DailyForecastAdapter
 
 
+
     // Skapa menyn
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
@@ -56,15 +57,14 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
 
 
-        // skapa repository
-        val weatherRepository = WeatherRepository()
-        val dailyForecastRepository = DailyForecastRepository()
-
-        val viewModelFactory = ViewModelFactory(weatherRepository, dailyForecastRepository)
-
-
         //skapa viewmodel
+        val viewModelFactory = ViewModelFactory(dailyForecastRepository = DailyForecastRepository(), weatherRepository = WeatherRepository())
+
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
+
+
+        //val weatherRepository = WeatherRepository()
+        //val dailyForecastRepository = DailyForecastRepository()
 
 
         // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
            if (networkEnabled() && locationEnabled())
            {
                binding.refreshLayout.isRefreshing = false
+               viewModel.refreshLocationData(this@MainActivity)
                showCurrentWeather()
                showDailyForecast()
            }
@@ -152,9 +153,7 @@ class MainActivity : AppCompatActivity() {
                         if (report!!.areAllPermissionsGranted()){
 
                             viewModel.requestLocationData(this@MainActivity)
-                                //viewModel.getLastKnownLocation(this@MainActivity)
                             locationEnabled = true
-
 
                             showCurrentWeather()
                             showDailyForecast()
@@ -164,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                         if (report.isAnyPermissionPermanentlyDenied){
 
                             Toast.makeText(this@MainActivity, "Behörighet till mobilens platstjänst har nekats", Toast.LENGTH_SHORT).show()
-
 
                         }                        }
 

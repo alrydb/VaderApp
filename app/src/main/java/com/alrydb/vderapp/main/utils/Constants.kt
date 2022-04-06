@@ -16,7 +16,6 @@ object Constants{
     // Språk för beskrivning av väder och namn på städer
     const val LANG: String = "se"
 
-
     const val METRIC_UNIT : String = "metric"
 
 
