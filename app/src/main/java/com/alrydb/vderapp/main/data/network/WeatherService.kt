@@ -20,7 +20,7 @@ interface WeatherService {
         @Query("units") units: String?,
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
-    ) : Call<WeatherResponse> // Returnerar ett gson objekt då det är den "converter" vi angett i vår Retrofitbuilder
+    ) : Call<WeatherResponse> // Returnerar ett gson  objekt då det är den "converter" vi angett i vår Retrofitbuilder
 
 
     @GET("2.5/onecall")
