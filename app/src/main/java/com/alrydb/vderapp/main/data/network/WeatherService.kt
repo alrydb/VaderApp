@@ -11,6 +11,8 @@ interface WeatherService {
 
 // https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=572c5e9a56daaad8dd3502bf88c4b5c7
 
+    // Ett http GET request med tillagda parametrar
+    // Exempel på hur url:en kommer se ut https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&units=metric&appid=572c5e9a56daaad8dd3502bf88c4b5c7&lang=se
     @GET("2.5/weather")
        fun getWeather(
         @Query("lat") lat : Double,
@@ -18,7 +20,7 @@ interface WeatherService {
         @Query("units") units: String?,
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
-    ) : Call<WeatherResponse> // Returnera ett WeatherResponse GSON-objekt
+    ) : Call<WeatherResponse> // Returnerar ett gson objekt då det är den "converter" vi angett i vår Retrofitbuilder
 
 
     @GET("2.5/onecall")
@@ -30,6 +32,6 @@ interface WeatherService {
         @Query("appid") appid : String?,
         @Query("lang") lang : String?,
 
-    ) : Call<DailyForecastResponse> // Returnera ett DailyForecastResponse GSON-objekt
+    ) : Call<DailyForecastResponse>
 
 }

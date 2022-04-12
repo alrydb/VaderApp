@@ -9,12 +9,12 @@ import retrofit2.Call
 class WeatherRepository() {
 
 
-
       fun getWeather(lat : Double, lon : Double): Call<WeatherResponse> {
 
           Log.i("response", "GETWEATHER CALLEWD FROM REPO")
-          // API-anrop, skickar ett request till webservern som retunerar ett svar som är av typen WeatherResponse
+          //  returnerar Call<WeatherResponse>
         return RetrofitInstance.weatherApi.getWeather(lat, lon, Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG)
+
 
     }
 

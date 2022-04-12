@@ -49,7 +49,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    // Process som körs i bakgrunden som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
+    // Process som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
     @SuppressLint("MissingPermission")
     fun requestLocationData(context: Context){
 
@@ -120,9 +120,10 @@ fun getLocationWeatherDetails(){
 
     val response = weatherRepository.getWeather(lat, lon)
 
+    //Skickar vårt HTTP GET request asynkront
     response.enqueue(object : Callback<WeatherResponse>{
 
-        //Lyckat api-anrop
+        //Anrop med svar
         override fun onResponse(
             call: Call<WeatherResponse>,
             response: Response<WeatherResponse>
@@ -132,7 +133,7 @@ fun getLocationWeatherDetails(){
                 // All data från vårt gson objekt, dvs vår deserialiserade json data
                 val weatherList : WeatherResponse? = response.body()
 
-                // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan får tillgång till
+                // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
                 currentWeatherList.value = weatherList
                 Log.i("Response result", "$weatherList")
 

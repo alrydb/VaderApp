@@ -8,8 +8,6 @@ import android.os.Build
 
 object NetworkController {
 
-
-
     fun isNetWorkAvailable(context: Context) : Boolean{
         val connectivityManager : ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -31,7 +29,7 @@ object NetworkController {
             }
         }
         else{
-            // Gamla sättet att koppla appen till internet
+            // Gamla sättet
 
             val networkInfo = connectivityManager.activeNetworkInfo
             return networkInfo != null && networkInfo.isConnectedOrConnecting
