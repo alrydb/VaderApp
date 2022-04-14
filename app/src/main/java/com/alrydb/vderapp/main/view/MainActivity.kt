@@ -1,6 +1,7 @@
 package com.alrydb.vderapp.main.view
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +9,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
@@ -24,6 +27,7 @@ import com.alrydb.vderapp.main.utils.Constants
 import com.alrydb.vderapp.main.utils.NetworkController
 
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
+import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -60,7 +64,10 @@ class MainActivity : AppCompatActivity() {
 
 
         //skapa viewmodel
-        val viewModelFactory = ViewModelFactory(dailyForecastRepository = DailyForecastRepository(), weatherRepository = WeatherRepository())
+        val viewModelFactory = ViewModelFactory(
+            dailyForecastRepository = DailyForecastRepository(),
+            weatherRepository = WeatherRepository()
+        )
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
 
@@ -70,40 +77,93 @@ class MainActivity : AppCompatActivity() {
 
 
         // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
-        if (networkEnabled() && locationEnabled())
-        {
+        if (networkEnabled() && locationEnabled()) {
             showCurrentWeather()
             showDailyForecast()
 
         }
 
         // När användaren refreshar appen
-        binding.refreshLayout.setOnRefreshListener(){
 
-           if (networkEnabled() && locationEnabled())
-           {
-               binding.refreshLayout.isRefreshing = false
-               viewModel.refreshLocationData(this@MainActivity)
-               showCurrentWeather()
-               showDailyForecast()
-           }
-            else if (!locationEnabled())
-           {
-               binding.refreshLayout.isRefreshing = false
-               Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
+        binding.refreshLayout.setOnRefreshListener() {
 
-            }
-            else if (!networkEnabled())
-           {
-               binding.refreshLayout.isRefreshing = false
-               Toast.makeText(this, "Kunde inte koppla upp till internet, väderdata kan inte hämtas", Toast.LENGTH_SHORT).show()
+
+
+
+            if (networkEnabled() && locationEnabled()) {
+
+                viewModel.refreshLocationData(this@MainActivity)
+                showCurrentWeather()
+                showDailyForecast()
+                binding.refreshLayout.isRefreshing = false
+            } else if (!locationEnabled()) {
+
+                Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
+                binding.refreshLayout.isRefreshing = false
+
+            } else if (!networkEnabled()) {
+
+                Toast.makeText(
+                    this,
+                    "Kunde inte koppla upp till internet, väderdata kan inte hämtas",
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.refreshLayout.isRefreshing = false
             }
 
 
         }
 
 
+
+
+
+
+        binding.forecastTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when(tab)
+                {
+                    binding.forecastTab.getTabAt(0) ->
+                        Log.i("tab", "tab 1 selected")
+                    binding.forecastTab.getTabAt(1)  ->
+                        Log.i("tab", "tab 2 selected")
+                }
+
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                when(tab)
+                {
+                    binding.forecastTab.getTabAt(0) ->
+                        Log.i("tab", "tab 1 unselected")
+                    binding.forecastTab.getTabAt(1)  ->
+                        Log.i("tab", "tab 2 unselected")
+                }
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                when(tab)
+                {
+                    binding.forecastTab.getTabAt(0) ->
+                        Log.i("tab", "tab 1 reselected")
+                    binding.forecastTab.getTabAt(1)  ->
+                        Log.i("tab", "tab 2 reselected")
+                }
+
+            }
+
+
+        })
+
+
     }
+
+
+
+
+
 
 
     private fun networkEnabled() : Boolean

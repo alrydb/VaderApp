@@ -12,6 +12,7 @@ data class DailyForecast(
     val sunset : Int,
     val moonrise : Int,
     val moonset:Int,
+    @SerializedName("moonPhase")
     val moon_phase: Double,
     val temp: Temp,
     val feelsLike: FeelsLike,
