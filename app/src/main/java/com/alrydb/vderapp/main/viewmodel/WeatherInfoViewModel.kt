@@ -32,6 +32,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     private  var lat : Double = 0.0 // latitud
     private  var lon : Double = 0.0 // longitud
 
+    var finishRefresh : Boolean = false
     val currentWeatherList : MutableLiveData<WeatherResponse> = MutableLiveData()
     val dailyForecastList : MutableLiveData<DailyForecastResponse> = MutableLiveData()
 
@@ -135,6 +136,7 @@ fun getLocationWeatherDetails(){
 
                 // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
                 currentWeatherList.value = weatherList
+                finishRefresh = true
                 Log.i("Response result", "$weatherList")
 
             }
@@ -173,7 +175,7 @@ fun getLocationWeatherDetails(){
 
                 val forecastList : DailyForecastResponse? = response.body()
                 dailyForecastList.value = forecastList
-
+                finishRefresh = true
                 Log.i("Response result", "$forecastList")
             }
 

@@ -1,7 +1,6 @@
 package com.alrydb.vderapp.main.view
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -9,13 +8,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +21,6 @@ import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
-import com.alrydb.vderapp.main.utils.Constants
 import com.alrydb.vderapp.main.utils.NetworkController
 
 import com.alrydb.vderapp.main.viewmodel.WeatherInfoViewModel
@@ -83,9 +78,7 @@ class MainActivity : AppCompatActivity() {
 
         // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
         if (networkEnabled() && locationEnabled()) {
-            showCurrentWeather()
-            showDailyForecast()
-
+            refreshContent()
         }
 
         // När användaren refreshar appen
@@ -100,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             } else if (!locationEnabled()) {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
-                swipeRefreshLayout!!.isRefreshing = false
 
             } else if (!networkEnabled()) {
 
@@ -109,11 +101,10 @@ class MainActivity : AppCompatActivity() {
                     "Kunde inte koppla upp till internet, väderdata kan inte hämtas",
                     Toast.LENGTH_SHORT
                 ).show()
-                swipeRefreshLayout!!.isRefreshing = false
+
             }
 
-            swipeRefreshLayout!!.isRefreshing = false
-            swipeRefreshLayout!!.isVisible = true
+
         }
 
 
@@ -170,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
         showDailyForecast()
-        swipeRefreshLayout!!.isRefreshing = false
+        //swipeRefreshLayout!!.isRefreshing = false
 
     }
 
@@ -294,7 +285,13 @@ class MainActivity : AppCompatActivity() {
             val uri = "https://openweathermap.org/img/w/" + weatherResponse.weather[0].icon + ".png"
             Picasso.get().load(uri).into(binding.iconWeather)
 
+
         })
+
+        if(viewModel.finishRefresh)
+        {
+            swipeRefreshLayout!!.isRefreshing = false
+        }
     }
 
 
@@ -307,7 +304,14 @@ class MainActivity : AppCompatActivity() {
                 // Skicka data som hämtas från api:n till adaptern
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
+
+
+
         })
+        if(viewModel.finishRefresh)
+        {
+            swipeRefreshLayout!!.isRefreshing = false
+        }
 
     }
 
