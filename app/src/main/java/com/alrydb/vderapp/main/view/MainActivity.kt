@@ -15,9 +15,11 @@ import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
@@ -39,6 +41,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
+
 
     lateinit var adapter : DailyForecastAdapter
 
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarNav)
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
+        swipeRefreshLayout = binding.refreshLayout
 
 
         //skapa viewmodel
@@ -85,21 +90,17 @@ class MainActivity : AppCompatActivity() {
 
         // När användaren refreshar appen
 
-        binding.refreshLayout.setOnRefreshListener() {
-
-
+        swipeRefreshLayout!!.setOnRefreshListener() {
 
 
             if (networkEnabled() && locationEnabled()) {
 
-                viewModel.refreshLocationData(this@MainActivity)
-                showCurrentWeather()
-                showDailyForecast()
-                binding.refreshLayout.isRefreshing = false
+                refreshContent()
+
             } else if (!locationEnabled()) {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
-                binding.refreshLayout.isRefreshing = false
+                swipeRefreshLayout!!.isRefreshing = false
 
             } else if (!networkEnabled()) {
 
@@ -108,10 +109,11 @@ class MainActivity : AppCompatActivity() {
                     "Kunde inte koppla upp till internet, väderdata kan inte hämtas",
                     Toast.LENGTH_SHORT
                 ).show()
-                binding.refreshLayout.isRefreshing = false
+                swipeRefreshLayout!!.isRefreshing = false
             }
 
-
+            swipeRefreshLayout!!.isRefreshing = false
+            swipeRefreshLayout!!.isVisible = true
         }
 
 
@@ -163,7 +165,14 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    private fun refreshContent()
+    {
+        viewModel.refreshLocationData(this@MainActivity)
+        showCurrentWeather()
+        showDailyForecast()
+        swipeRefreshLayout!!.isRefreshing = false
 
+    }
 
 
     private fun networkEnabled() : Boolean

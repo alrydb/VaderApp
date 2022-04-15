@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/alryd/AndroidStudioProjects/VaderApp/app/src/main/res/layout/forecast_item.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/alryd/AndroidStudioProjects/VaderApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/alryd/AndroidStudioProjects/VaderApp/app/src/main/res/layout/activity_main_test.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/alryd/AndroidStudioProjects/VaderApp/app/src/main/res/layout/forecast_item.xml" value="0.33" />
         <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/drawable/ic_favorite_border.xml" value="0.1" />
         <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/drawable/ic_forecast.xml" value="0.1" />
         <entry key="..\:/Users/alryd/AndroidStudioProjects/VderApp/app/src/main/res/drawable/ic_search.xml" value="0.13333333333333333" />
