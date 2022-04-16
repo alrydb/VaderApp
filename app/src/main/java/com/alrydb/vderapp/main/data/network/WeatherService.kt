@@ -3,6 +3,7 @@ package com.alrydb.vderapp.main.data.network
 import com.alrydb.vderapp.main.data.models.weather.Forecast
 import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
+import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -33,5 +34,17 @@ interface WeatherService {
         @Query("lang") lang : String?,
 
     ) : Call<DailyForecastResponse>
+
+
+    @GET("2.5/onecall")
+    fun getHourlyForecast(
+        @Query("lat") lat : Double,
+        @Query("lon") lon : Double,
+        @Query("exclude") exclude : String?,
+        @Query("units") units: String?,
+        @Query("appid") appid : String?,
+        @Query("lang") lang : String?,
+
+        ) : Call<HourlyForecastResponse>
 
 }

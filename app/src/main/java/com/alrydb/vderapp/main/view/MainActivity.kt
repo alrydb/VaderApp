@@ -20,6 +20,7 @@ import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
+import com.alrydb.vderapp.main.data.repo.HourlyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.alrydb.vderapp.main.utils.NetworkController
 
@@ -66,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         //skapa viewmodel
         val viewModelFactory = ViewModelFactory(
             dailyForecastRepository = DailyForecastRepository(),
-            weatherRepository = WeatherRepository()
+            weatherRepository = WeatherRepository(),
+            hourlyForecastRepository = HourlyForecastRepository()
         )
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
@@ -161,6 +163,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
         showDailyForecast()
+
         //swipeRefreshLayout!!.isRefreshing = false
 
     }
@@ -217,8 +220,8 @@ class MainActivity : AppCompatActivity() {
                             viewModel.requestLocationData(this@MainActivity)
                             locationEnabled = true
 
-                            showCurrentWeather()
-                            showDailyForecast()
+                            /*showCurrentWeather()
+                            showDailyForecast()*/
 
                         }
                         // Om behörigheter nekas av användaren

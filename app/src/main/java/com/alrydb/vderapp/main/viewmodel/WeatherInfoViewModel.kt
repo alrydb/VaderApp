@@ -13,7 +13,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
+import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
+import com.alrydb.vderapp.main.data.repo.HourlyForecastRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -23,20 +25,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository): AndroidViewModel(Application()) {
-
+class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository, private val hourlyForecastRepository: HourlyForecastRepository): AndroidViewModel(Application()) {
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
 
-    private  var lat : Double = 0.0 // latitud
-    private  var lon : Double = 0.0 // longitud
+    private var lat: Double = 0.0 // latitud
+    private var lon: Double = 0.0 // longitud
 
-    var finishRefresh : Boolean = false
-    val currentWeatherList : MutableLiveData<WeatherResponse> = MutableLiveData()
-    val dailyForecastList : MutableLiveData<DailyForecastResponse> = MutableLiveData()
+    var finishRefresh: Boolean = false
+    val currentWeatherList: MutableLiveData<WeatherResponse> = MutableLiveData()
+    val dailyForecastList: MutableLiveData<DailyForecastResponse> = MutableLiveData()
+    val hourlyForecastList: MutableLiveData<HourlyForecastResponse> = MutableLiveData()
 
-        fun isLocationEnabled(context: Context): Boolean{
+    fun isLocationEnabled(context: Context): Boolean {
 
 
         // Få tillgång till användarens plats
@@ -52,7 +54,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     // Process som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
     @SuppressLint("MissingPermission")
-    fun requestLocationData(context: Context){
+    fun requestLocationData(context: Context) {
 
 
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -71,28 +73,30 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         )
 
 
-
     }
 
 
     // Funktion som manuellt uppdaterar mobilens plats, anropas när användaren "refreshar" appen
     @SuppressLint("MissingPermission")
-    fun refreshLocationData(context: Context){
+    fun refreshLocationData(context: Context) {
 
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val cancellationTokenSource = CancellationTokenSource()
-        mfusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token).addOnSuccessListener{ task ->
+        mfusedLocationClient.getCurrentLocation(
+            PRIORITY_HIGH_ACCURACY,
+            cancellationTokenSource.token
+        ).addOnSuccessListener { task ->
             lat = task.latitude
             lon = task.longitude
 
             getLocationWeatherDetails()
             getLocationForecastDetails()
+            getLocationHourlyForecastDetails()
         }
 
 
     }
-
 
 
     private val mLocationCallback = object : LocationCallback() {
@@ -108,72 +112,70 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
             getLocationWeatherDetails()
             getLocationForecastDetails()
+            getLocationHourlyForecastDetails()
 
         }
-
 
 
     }
 
 
+    fun getLocationWeatherDetails() {
 
-fun getLocationWeatherDetails(){
+        val response = weatherRepository.getWeather(lat, lon)
 
-    val response = weatherRepository.getWeather(lat, lon)
+        //Skickar vårt HTTP GET request asynkront
+        response.enqueue(object : Callback<WeatherResponse> {
 
-    //Skickar vårt HTTP GET request asynkront
-    response.enqueue(object : Callback<WeatherResponse>{
+            //Anrop med svar
+            override fun onResponse(
+                call: Call<WeatherResponse>,
+                response: Response<WeatherResponse>
+            ) {
+                if (response!!.isSuccessful) {
+                    // All data från vårt gson objekt, dvs vår deserialiserade json data
+                    val weatherList: WeatherResponse? = response.body()
 
-        //Anrop med svar
-        override fun onResponse(
-            call: Call<WeatherResponse>,
-            response: Response<WeatherResponse>
-        ) {
-            if(response!!.isSuccessful)
-            {
-                // All data från vårt gson objekt, dvs vår deserialiserade json data
-                val weatherList : WeatherResponse? = response.body()
+                    // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
+                    currentWeatherList.value = weatherList
+                    finishRefresh = true
+                    Log.i("Response result", "$weatherList")
 
-                // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
-                currentWeatherList.value = weatherList
-                finishRefresh = true
-                Log.i("Response result", "$weatherList")
-
-            }
-            else
-            {
-                val rc = response.code()
-                when(rc){
-                    400 ->{
-                        Log.e("Error 400", "bad connection")
-                    }
-                    404 ->{
-                        Log.e("Error 404", "not found")
-                    }
-                    else ->{
-                        Log.e("Error", "Generic error")
+                } else {
+                    val rc = response.code()
+                    when (rc) {
+                        400 -> {
+                            Log.e("Error 400", "bad connection")
+                        }
+                        404 -> {
+                            Log.e("Error 404", "not found")
+                        }
+                        else -> {
+                            Log.e("Error", "Generic error")
+                        }
                     }
                 }
             }
-        }
 
-        override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-            Log.e("Error", t!!.message.toString())
-        }
+            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                Log.e("Error", t!!.message.toString())
+            }
 
-    })
+        })
 
-}
-
+    }
 
 
-    fun getLocationForecastDetails(){
+    fun getLocationForecastDetails() {
 
         val response = dailyForecastRepository.getDailyForecast(lat, lon)
-        response.enqueue(object : Callback <DailyForecastResponse>{
-            override fun onResponse(call: Call<DailyForecastResponse>, response: Response<DailyForecastResponse>) {
+        response.enqueue(object : Callback<DailyForecastResponse> {
+            override fun onResponse(
+                call: Call<DailyForecastResponse>,
+                response: Response<DailyForecastResponse>
+            ) {
 
-                val forecastList : DailyForecastResponse? = response.body()
+                val forecastList: DailyForecastResponse? = response.body()
                 dailyForecastList.value = forecastList
                 finishRefresh = true
                 Log.i("Response result", "$forecastList")
@@ -189,5 +191,26 @@ fun getLocationWeatherDetails(){
     }
 
 
+    fun getLocationHourlyForecastDetails() {
 
+        val response = hourlyForecastRepository.getHourlyForecast(lat, lon)
+        response.enqueue(object : Callback<HourlyForecastResponse> {
+            override fun onResponse(
+                call: Call<HourlyForecastResponse>,
+                response: Response<HourlyForecastResponse>
+            ) {
+
+                val forecastList: HourlyForecastResponse? = response.body()
+                hourlyForecastList.value = forecastList
+                finishRefresh = true
+                Log.i("Response result HOURLY", "$forecastList")
+            }
+
+            override fun onFailure(call: Call<HourlyForecastResponse>, t: Throwable) {
+                Log.e("HourlyForecast error", t!!.message.toString())
+            }
+
+        })
+
+    }
 }
