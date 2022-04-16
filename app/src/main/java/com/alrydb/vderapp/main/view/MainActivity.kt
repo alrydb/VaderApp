@@ -162,7 +162,8 @@ class MainActivity : AppCompatActivity() {
     {
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
-        showDailyForecast()
+       /* showDailyForecast()*/
+        showHourlyForecast()
 
         //swipeRefreshLayout!!.isRefreshing = false
 
@@ -308,6 +309,22 @@ class MainActivity : AppCompatActivity() {
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
 
+        })
+        if(viewModel.finishRefresh)
+        {
+            swipeRefreshLayout!!.isRefreshing = false
+        }
+
+    }
+
+    private fun showHourlyForecast()
+    {
+        // Visa 7 dagars-prognos för nuvarande plats
+        viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
+            binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+            // Skicka data som hämtas från api:n till adaptern
+            binding?.forecastRv?.adapter = HourlyForecastAdapter(hourlyForecastResponse)
 
 
         })

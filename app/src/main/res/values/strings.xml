@@ -7,4 +7,6 @@
     <string name="weather_current">Just nu</string>
     <string name="temp_max">Max</string>
     <string name="temp_min">Min</string>
+    <string name="temp_current">Temp</string>
+    <string name="temp_feelslike">Känns som</string>
 </resources>
