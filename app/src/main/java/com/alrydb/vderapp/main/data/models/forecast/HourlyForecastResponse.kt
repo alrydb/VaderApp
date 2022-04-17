@@ -8,7 +8,7 @@ data class HourlyForecastResponse (
     val lat : Double,
     val lon : Double,
     val timezone : String,
-    @SerializedName("timezoneOffset")
-    val timezone_offset : Int,
+    @SerializedName("timezone_offset")
+    val timezoneOffset : Int,
     val hourly : List<HourlyForecast>
 ) : Serializable

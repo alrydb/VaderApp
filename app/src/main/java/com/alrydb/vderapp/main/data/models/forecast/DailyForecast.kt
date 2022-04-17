@@ -12,20 +12,20 @@ data class DailyForecast(
     val sunset : Int,
     val moonrise : Int,
     val moonset:Int,
-    @SerializedName("moonPhase")
-    val moon_phase: Double,
+    @SerializedName("moon_phase")
+    val moonPhase: Double,
     val temp: Temp,
     val feelsLike: FeelsLike,
     val pressure: Int,
     val humidity: Int,
-    @SerializedName("dewPoint")
-    val dew_point : Double,
-    @SerializedName("windSpeed")
-    val wind_speed : Double,
-    @SerializedName("windDeg")
-    val wind_deg : Int,
-    @SerializedName("windGust")
-    val wind_gust : Double,
+    @SerializedName("dew_point")
+    val dewPoint : Double,
+    @SerializedName("wind_speed")
+    val windSpeed : Double,
+    @SerializedName("wind_deg")
+    val windDeg : Int,
+    @SerializedName("wind_gust")
+    val windGust : Double,
     val weather: List<Weather>,
     val clouds: Int,
     val pop : Double,

@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class HourlyForecastAdapter(val hourlyForecastResponse : HourlyForecastResponse) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
+class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
 
     inner class MainViewHolder(val itemBinding: HourlyForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
@@ -29,11 +29,19 @@ class HourlyForecastAdapter(val hourlyForecastResponse : HourlyForecastResponse)
             Picasso.get().load(uri).into(itemBinding.ivWeatherIconHourly)
 
             val calendar: Calendar = Calendar.getInstance()
+
+            // 'dt' ger tid för prognosen i "epoch time"
             Log.i("time", "${hourlyForecast.dt}")
             calendar.setTimeInMillis((hourlyForecast.dt * 1000L))
 
             val weekdayDate = SimpleDateFormat("E")
             val weekdayDateName = weekdayDate.format(calendar.time)
+
+            val hours = calendar.get(Calendar.HOUR_OF_DAY)
+
+            val h = SimpleDateFormat("HH")
+            val hh = h.format(calendar.time)
+
 
             val monthDate = SimpleDateFormat("MMMM")
             val monthName = monthDate.format(calendar.time)
@@ -43,6 +51,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : HourlyForecastResponse)
 
             /*itemBinding.tvDay.text = weekdayDateName + " "
             itemBinding.tvDate.text =  dayName + " " + monthName*/
+            itemBinding.tvHour.text = "kl " + hh.toString() + ": 00"
             itemBinding.tvTempCurrent.text = hourlyForecast.temp.toString().substringBefore(".") + "°C"
             itemBinding.tvTempFeelslike.text = hourlyForecast.feelsLike.toString().substringBefore(".") + "°C"
         }
@@ -53,7 +62,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : HourlyForecastResponse)
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        val forecast = hourlyForecastResponse.hourly[position]
+        val forecast = hourlyForecastResponse[position]
         // Tilldelar varje rad i recyclerviewen rätt innehåll
         holder.bindItem(forecast)
 
@@ -74,7 +83,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : HourlyForecastResponse)
     }
 
     override fun getItemCount(): Int {
-        return hourlyForecastResponse.hourly.size
+        return hourlyForecastResponse.size
     }
 
 

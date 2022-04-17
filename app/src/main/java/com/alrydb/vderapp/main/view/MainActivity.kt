@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
+import com.alrydb.vderapp.main.data.models.forecast.HourlyForecast
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.HourlyForecastRepository
@@ -118,10 +119,14 @@ class MainActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab)
                 {
-                    binding.forecastTab.getTabAt(0) ->
+                    binding.forecastTab.getTabAt(0) -> {
                         Log.i("tab", "tab 1 selected")
-                    binding.forecastTab.getTabAt(1)  ->
+                        showHourlyForecast()
+                    }
+                    binding.forecastTab.getTabAt(1)  -> {
                         Log.i("tab", "tab 2 selected")
+                        showDailyForecast()
+                    }
                 }
 
 
@@ -305,6 +310,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+
                 // Skicka data som hämtas från api:n till adaptern
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
@@ -323,8 +329,21 @@ class MainActivity : AppCompatActivity() {
         viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+            var adapterlist : MutableList<HourlyForecast> = mutableListOf()
+
+            for(i in hourlyForecastResponse.hourly)
+            {
+                adapterlist.add(i)
+                // Api-svaret ger data för 48 timamr, vi vill endast visa 24 timmar
+                if (i == hourlyForecastResponse.hourly[23])
+                {
+                    break
+                }
+
+            }
+
             // Skicka data som hämtas från api:n till adaptern
-            binding?.forecastRv?.adapter = HourlyForecastAdapter(hourlyForecastResponse)
+            binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist)
 
 
         })

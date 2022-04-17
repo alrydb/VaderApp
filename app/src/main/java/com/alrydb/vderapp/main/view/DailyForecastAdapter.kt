@@ -40,6 +40,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse) : 
             itemBinding.tvDate.text =  dayName + " " + monthName
             itemBinding.tvTempMax.text = dailyForecast.temp.max.toString().substringBefore(".") + "°C"
             itemBinding.tvTempMin.text = dailyForecast.temp.min.toString().substringBefore(".") + "°C"
+
         }
     }
 

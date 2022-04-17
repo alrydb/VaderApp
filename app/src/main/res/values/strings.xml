@@ -9,4 +9,6 @@
     <string name="temp_min">Min</string>
     <string name="temp_current">Temp</string>
     <string name="temp_feelslike">Känns som</string>
+    <string name="tab_7days">7 dagar</string>
+    <string name="tab_24h">24 timmar</string>
 </resources>
