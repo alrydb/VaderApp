@@ -21,6 +21,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationRequest.create
 import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,13 +91,16 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             lat = task.latitude
             lon = task.longitude
 
-            getLocationWeatherDetails()
-            getLocationForecastDetails()
-            getLocationHourlyForecastDetails()
         }
 
 
     }
+
+
+
+
+
+
 
 
     private val mLocationCallback = object : LocationCallback() {
@@ -120,7 +124,23 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    fun getLocationWeatherDetails() {
+    fun refreshHourlyForecast()
+    {
+        getLocationHourlyForecastDetails()
+    }
+
+    fun refreshDailyForecast()
+    {
+        getLocationForecastDetails()
+    }
+
+    fun refreshCurrentWeather()
+    {
+        getLocationWeatherDetails()
+    }
+
+
+    private fun getLocationWeatherDetails() {
 
         val response = weatherRepository.getWeather(lat, lon)
 
@@ -138,7 +158,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
                     // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
                     currentWeatherList.value = weatherList
-                    finishRefresh = true
+
+
                     Log.i("Response result", "$weatherList")
 
                 } else {
@@ -159,6 +180,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
                 Log.e("Error", t!!.message.toString())
+                finishRefresh = true
             }
 
         })
@@ -166,7 +188,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    fun getLocationForecastDetails() {
+   private fun getLocationForecastDetails() {
 
         val response = dailyForecastRepository.getDailyForecast(lat, lon)
         response.enqueue(object : Callback<DailyForecastResponse> {
@@ -177,8 +199,9 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
                 val forecastList: DailyForecastResponse? = response.body()
                 dailyForecastList.value = forecastList
-                finishRefresh = true
+
                 Log.i("Response result", "$forecastList")
+                finishRefresh = true
             }
 
             override fun onFailure(call: Call<DailyForecastResponse>, t: Throwable) {
@@ -191,7 +214,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    fun getLocationHourlyForecastDetails() {
+    private fun getLocationHourlyForecastDetails() {
 
         val response = hourlyForecastRepository.getHourlyForecast(lat, lon)
         response.enqueue(object : Callback<HourlyForecastResponse> {
@@ -202,8 +225,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
                 val forecastList: HourlyForecastResponse? = response.body()
                 hourlyForecastList.value = forecastList
-                finishRefresh = true
+
                 Log.i("Response result HOURLY", "$forecastList")
+                Log.i("response result refresh", finishRefresh.toString())
+                finishRefresh = true
             }
 
             override fun onFailure(call: Call<HourlyForecastResponse>, t: Throwable) {
@@ -212,5 +237,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
         })
 
+        Log.i("response result refresh", finishRefresh.toString())
     }
 }

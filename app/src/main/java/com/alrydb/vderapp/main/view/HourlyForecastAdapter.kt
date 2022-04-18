@@ -34,24 +34,10 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>) :
             Log.i("time", "${hourlyForecast.dt}")
             calendar.setTimeInMillis((hourlyForecast.dt * 1000L))
 
-            val weekdayDate = SimpleDateFormat("E")
-            val weekdayDateName = weekdayDate.format(calendar.time)
+            val hour = SimpleDateFormat("HH")
+            val hourName = hour.format(calendar.time)
 
-            val hours = calendar.get(Calendar.HOUR_OF_DAY)
-
-            val h = SimpleDateFormat("HH")
-            val hh = h.format(calendar.time)
-
-
-            val monthDate = SimpleDateFormat("MMMM")
-            val monthName = monthDate.format(calendar.time)
-
-            val dayDate = SimpleDateFormat("d")
-            val dayName = dayDate.format(calendar.time)
-
-            /*itemBinding.tvDay.text = weekdayDateName + " "
-            itemBinding.tvDate.text =  dayName + " " + monthName*/
-            itemBinding.tvHour.text = "kl " + hh.toString() + ": 00"
+            itemBinding.tvHour.text = "Kl " + hourName.toString() + ": 00"
             itemBinding.tvTempCurrent.text = hourlyForecast.temp.toString().substringBefore(".") + "°C"
             itemBinding.tvTempFeelslike.text = hourlyForecast.feelsLike.toString().substringBefore(".") + "°C"
         }

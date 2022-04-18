@@ -12,12 +12,14 @@ import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
 import com.alrydb.vderapp.main.data.models.forecast.HourlyForecast
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
@@ -38,7 +40,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
+    private lateinit var adapterList : MutableList<Any>
     var swipeRefreshLayout: SwipeRefreshLayout? = null
+    private var twentyFourHoursSelected : Boolean = true
+    private var sevenDaysSelected: Boolean = false
 
 
     lateinit var adapter : DailyForecastAdapter
@@ -90,9 +95,7 @@ class MainActivity : AppCompatActivity() {
 
 
             if (networkEnabled() && locationEnabled()) {
-
                 refreshContent()
-
             } else if (!locationEnabled()) {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
@@ -107,7 +110,6 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-
         }
 
 
@@ -115,47 +117,68 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        binding.forecastTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when(tab)
-                {
-                    binding.forecastTab.getTabAt(0) -> {
-                        Log.i("tab", "tab 1 selected")
-                        showHourlyForecast()
+            binding.forecastTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    when (tab) {
+                        binding.forecastTab.getTabAt(0) -> {
+                            showHourlyForecast()
+                            Log.i("tab", "tab 1 selected")
+                            twentyFourHoursSelected = true
+
+
+                        }
+                        binding.forecastTab.getTabAt(1) -> {
+                            showDailyForecast()
+                            Log.i("tab", "tab 2 selected")
+
+                            sevenDaysSelected = true
+
+                        }
                     }
-                    binding.forecastTab.getTabAt(1)  -> {
-                        Log.i("tab", "tab 2 selected")
-                        showDailyForecast()
+
+
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    when (tab) {
+                        binding.forecastTab.getTabAt(0) -> {
+                            Log.i("tab", "tab 1 unselected")
+                            twentyFourHoursSelected = false
+
+
+                        }
+
+                        binding.forecastTab.getTabAt(1) -> {
+                            Log.i("tab", "tab 2 unselected")
+
+                            sevenDaysSelected = false
+
+                        }
+
                     }
+
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                    when (tab) {
+                        binding.forecastTab.getTabAt(0) -> {
+                            Log.i("tab", "tab 1 reselected")
+                            twentyFourHoursSelected = true
+
+                        }
+
+                        binding.forecastTab.getTabAt(1) -> {
+                            Log.i("tab", "tab 2 reselected")
+                            sevenDaysSelected = true
+                        }
+
+                    }
+
                 }
 
 
-            }
+            })
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                when(tab)
-                {
-                    binding.forecastTab.getTabAt(0) ->
-                        Log.i("tab", "tab 1 unselected")
-                    binding.forecastTab.getTabAt(1)  ->
-                        Log.i("tab", "tab 2 unselected")
-                }
-
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                when(tab)
-                {
-                    binding.forecastTab.getTabAt(0) ->
-                        Log.i("tab", "tab 1 reselected")
-                    binding.forecastTab.getTabAt(1)  ->
-                        Log.i("tab", "tab 2 reselected")
-                }
-
-            }
-
-
-        })
 
 
     }
@@ -165,12 +188,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshContent()
     {
-        viewModel.refreshLocationData(this@MainActivity)
-        showCurrentWeather()
-       /* showDailyForecast()*/
-        showHourlyForecast()
 
-        //swipeRefreshLayout!!.isRefreshing = false
+
+
+        var tab = binding.forecastTab.selectedTabPosition
+
+        showCurrentWeather()
+        Log.i("help",tab.toString())
+        if (twentyFourHoursSelected)
+        {
+            viewModel.refreshLocationData(this@MainActivity)
+            viewModel.refreshHourlyForecast()
+            showHourlyForecast()
+
+
+
+        }
+        else if (sevenDaysSelected)
+        {
+            viewModel.refreshLocationData(this@MainActivity)
+            viewModel.refreshDailyForecast()
+            showDailyForecast()
+
+        }
+
 
     }
 
@@ -300,8 +341,25 @@ class MainActivity : AppCompatActivity() {
         if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
+
+
         }
     }
+
+
+
+    private fun observeViewModel()
+    {
+        // Visa 7 dagars-prognos för nuvarande plats
+        viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
+
+            var adapterlist : MutableList<DailyForecast> = mutableListOf()
+
+
+        })
+
+    }
+
 
 
     private fun showDailyForecast()
@@ -312,13 +370,15 @@ class MainActivity : AppCompatActivity() {
 
 
                 // Skicka data som hämtas från api:n till adaptern
+
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
 
         })
-        if(viewModel.finishRefresh)
+       if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
+
         }
 
     }
@@ -346,10 +406,12 @@ class MainActivity : AppCompatActivity() {
             binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist)
 
 
+
         })
         if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
+
         }
 
     }
