@@ -14,8 +14,10 @@ import androidx.lifecycle.MutableLiveData
 import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
+import com.alrydb.vderapp.main.data.models.location.LocationResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.HourlyForecastRepository
+import com.alrydb.vderapp.main.data.repo.LocationRepository
 import com.alrydb.vderapp.main.data.repo.WeatherRepository
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -26,7 +28,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository, private val hourlyForecastRepository: HourlyForecastRepository): AndroidViewModel(Application()) {
+class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository, private val hourlyForecastRepository: HourlyForecastRepository, private val locationRepository: LocationRepository): AndroidViewModel(Application()) {
 
 
     private lateinit var mfusedLocationClient: FusedLocationProviderClient
@@ -117,6 +119,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationWeatherDetails()
             getLocationForecastDetails()
             getLocationHourlyForecastDetails()
+            getSearchedLocationDetails()
 
         }
 
@@ -239,4 +242,34 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
         Log.i("response result refresh", finishRefresh.toString())
     }
+
+
+    private fun getSearchedLocationDetails() {
+
+        val response = locationRepository.getSearchedLocation("Hjo")
+        response.enqueue(object : Callback<LocationResponse> {
+            override fun onResponse(
+                call: Call<LocationResponse>,
+                response: Response<LocationResponse>
+            ) {
+
+                val locationList: LocationResponse? = response.body()
+
+
+
+
+                Log.i("search", "${locationList?.get(0)?.name}")
+                Log.i("response result refresh", finishRefresh.toString())
+                finishRefresh = true
+            }
+
+            override fun onFailure(call: Call<LocationResponse>, t: Throwable) {
+                Log.e("locationresponse error", t!!.message.toString())
+            }
+
+        })
+
+        Log.i("response result refresh", finishRefresh.toString())
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.alrydb.vderapp.main.view
 
+import android.app.SearchManager
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -10,8 +12,11 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
+import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuItemCompat
 import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,13 +40,18 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
+import android.view.View.OnAttachStateChangeListener
+import com.alrydb.vderapp.main.data.repo.LocationRepository
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
     private lateinit var adapterList : MutableList<Any>
+    private lateinit var searchView: androidx.appcompat.widget.SearchView
     var swipeRefreshLayout: SwipeRefreshLayout? = null
+
     private var twentyFourHoursSelected : Boolean = true
     private var sevenDaysSelected: Boolean = false
 
@@ -53,6 +63,56 @@ class MainActivity : AppCompatActivity() {
     // Skapa menyn
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
+
+
+        // Konfigurera sök https://developer.android.com/guide/topics/search/search-dialog#UsingSearchWidget
+        searchView = (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView)
+
+        // Get the SearchView and set the searchable configuration
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView.apply {
+            // Assumes current activity is the searchable activity
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
+        }
+
+
+
+        // Kod som hanterar vad som händer när sökvyn öppnas och stängs
+        searchView.addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
+            override fun onViewDetachedFromWindow(arg0: View) {
+                // Searchview stängs
+                binding.cityName.setVisibility(View.VISIBLE)
+                binding.countryName.setVisibility(View.VISIBLE)
+                binding.imageView.setVisibility(View.VISIBLE)
+
+            }
+
+            override fun onViewAttachedToWindow(arg0: View) {
+                // Searchview öppnas
+                binding.cityName.setVisibility(View.INVISIBLE)
+                binding.countryName.setVisibility(View.INVISIBLE)
+                binding.imageView.setVisibility(View.INVISIBLE)
+
+            }
+        })
+
+
+        searchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.i("search",query ?: "tom" )
+                return true
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                Log.i("search",query ?: "tom" )
+                return true
+            }
+
+
+        }
+        )
 
         return true
     }
@@ -74,7 +134,9 @@ class MainActivity : AppCompatActivity() {
         val viewModelFactory = ViewModelFactory(
             dailyForecastRepository = DailyForecastRepository(),
             weatherRepository = WeatherRepository(),
-            hourlyForecastRepository = HourlyForecastRepository()
+            hourlyForecastRepository = HourlyForecastRepository(),
+            locationRepository = LocationRepository()
+
         )
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
@@ -181,8 +243,23 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     }
 
+
+
+ /*   override fun onBackPressed() {
+        if (!searchView.hasFocus()) {
+            binding.cityName.setVisibility(View.VISIBLE)
+            binding.countryName.setVisibility(View.VISIBLE)
+            binding.imageView.setVisibility(View.VISIBLE)
+
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+*/
 
 
 

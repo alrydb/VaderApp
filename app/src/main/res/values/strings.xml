@@ -11,4 +11,6 @@
     <string name="temp_feelslike">Känns som</string>
     <string name="tab_7days">7 dagar</string>
     <string name="tab_24h">24 timmar</string>
+    <string name="app_label">Weatherapp</string>
+    <string name="search_hint">Sök</string>
 </resources>
