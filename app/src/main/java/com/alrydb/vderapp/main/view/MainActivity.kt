@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.i("search",query ?: "tom" )
+                viewModel.getSearchedLocationDetails(query)
+
                 return true
             }
 

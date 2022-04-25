@@ -3,6 +3,7 @@ package com.alrydb.vderapp.main.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.location.Location
 import android.location.LocationManager
 
 //import android.location.LocationRequest
@@ -35,6 +36,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     private var lat: Double = 0.0 // latitud
     private var lon: Double = 0.0 // longitud
+    private lateinit var locationResponse : LocationResponse
 
     var finishRefresh: Boolean = false
     val currentWeatherList: MutableLiveData<WeatherResponse> = MutableLiveData()
@@ -75,7 +77,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             Looper.getMainLooper()
         )
 
-
     }
 
 
@@ -94,6 +95,19 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             lon = task.longitude
 
         }
+
+
+    }
+
+    @SuppressLint("MissingPermission")
+    fun refreshSearchedLocation() {
+
+            lat = locationResponse[0].lat
+            lon = locationResponse[0].lon
+
+            getLocationWeatherDetails()
+            getLocationForecastDetails()
+            getLocationHourlyForecastDetails()
 
 
     }
@@ -119,7 +133,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationWeatherDetails()
             getLocationForecastDetails()
             getLocationHourlyForecastDetails()
-            getSearchedLocationDetails()
+            //getSearchedLocationDetails()
 
         }
 
@@ -244,9 +258,9 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    private fun getSearchedLocationDetails() {
+     fun getSearchedLocationDetails(location : String?) {
 
-        val response = locationRepository.getSearchedLocation("Hjo")
+        val response = locationRepository.getSearchedLocation(location ?: "London")
         response.enqueue(object : Callback<LocationResponse> {
             override fun onResponse(
                 call: Call<LocationResponse>,
@@ -254,13 +268,16 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             ) {
 
                 val locationList: LocationResponse? = response.body()
-
+                if (locationList != null) {
+                    locationResponse = locationList
+                }
 
 
 
                 Log.i("search", "${locationList?.get(0)?.name}")
                 Log.i("response result refresh", finishRefresh.toString())
                 finishRefresh = true
+                refreshSearchedLocation()
             }
 
             override fun onFailure(call: Call<LocationResponse>, t: Throwable) {
