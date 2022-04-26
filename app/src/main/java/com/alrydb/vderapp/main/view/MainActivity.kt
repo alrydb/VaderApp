@@ -103,6 +103,10 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.i("search",query ?: "tom" )
                 viewModel.getSearchedLocationDetails(query)
+                (menu.findItem(R.id.search)).collapseActionView()
+                binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
+                twentyFourHoursSelected = true
+                sevenDaysSelected = false
 
                 return true
             }
@@ -250,19 +254,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
- /*   override fun onBackPressed() {
-        if (!searchView.hasFocus()) {
-            binding.cityName.setVisibility(View.VISIBLE)
-            binding.countryName.setVisibility(View.VISIBLE)
-            binding.imageView.setVisibility(View.VISIBLE)
-
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-*/
-
 
 
     private fun refreshContent()
@@ -279,8 +270,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.refreshLocationData(this@MainActivity)
             viewModel.refreshHourlyForecast()
             showHourlyForecast()
-
-
 
         }
         else if (sevenDaysSelected)
@@ -406,6 +395,7 @@ class MainActivity : AppCompatActivity() {
             // Visa väderdata för nuvarande plats och tid
             binding.cityName.text = weatherResponse.name
             binding.countryName.text = weatherResponse.sys.country
+            binding.currentWind.text = weatherResponse.wind.speed.toInt().toString() + " m/s"
             binding.currentTemp.text = weatherResponse.main.temp.toString().substringBefore(".") + "°C"
             binding.currentDescription.text = weatherResponse.weather[0].description.replaceFirstChar {
                 weatherResponse.weather[0].description[0].uppercase()
@@ -426,18 +416,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    private fun observeViewModel()
-    {
-        // Visa 7 dagars-prognos för nuvarande plats
-        viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
-
-            var adapterlist : MutableList<DailyForecast> = mutableListOf()
-
-
-        })
-
-    }
 
 
 

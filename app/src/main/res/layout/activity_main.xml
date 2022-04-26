@@ -133,17 +133,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/current_temp" />
 
+
+    <TextView
+        android:id="@+id/current_wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_temp" />
+
     <TextView
         android:id="@+id/current_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="TextView"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_temp" />
+        app:layout_constraintTop_toBottomOf="@+id/current_wind" />
 
 
     <!-- Bottom nav -->
@@ -183,6 +196,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

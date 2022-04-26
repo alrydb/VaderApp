@@ -32,7 +32,10 @@ import retrofit2.Response
 class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository, private val hourlyForecastRepository: HourlyForecastRepository, private val locationRepository: LocationRepository): AndroidViewModel(Application()) {
 
 
-    private lateinit var mfusedLocationClient: FusedLocationProviderClient
+    private var mfusedLocationClient: FusedLocationProviderClient? = null
+    private var mLocationRequest : LocationRequest? = null
+   /* private var mLocationCallback : LocationCallback? = null*/
+
 
     private var lat: Double = 0.0 // latitud
     private var lon: Double = 0.0 // longitud
@@ -64,7 +67,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-        val mLocationRequest = create().apply {
+        mLocationRequest = create().apply {
             interval = 60000
             fastestInterval = 30000
 
@@ -72,8 +75,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         }
 
 
-        mfusedLocationClient.requestLocationUpdates(
-            mLocationRequest, mLocationCallback,
+        mfusedLocationClient!!.requestLocationUpdates(
+            mLocationRequest!!, mLocationCallback,
             Looper.getMainLooper()
         )
 
@@ -87,7 +90,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val cancellationTokenSource = CancellationTokenSource()
-        mfusedLocationClient.getCurrentLocation(
+        mfusedLocationClient!!.getCurrentLocation(
             PRIORITY_HIGH_ACCURACY,
             cancellationTokenSource.token
         ).addOnSuccessListener { task ->
@@ -99,7 +102,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     }
 
-    @SuppressLint("MissingPermission")
+
     fun refreshSearchedLocation() {
 
             lat = locationResponse[0].lat
@@ -109,6 +112,16 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationForecastDetails()
             getLocationHourlyForecastDetails()
 
+            stopLocationUpdates()
+
+    }
+
+
+    private fun stopLocationUpdates() {
+        mfusedLocationClient?.removeLocationUpdates(mLocationCallback)
+
+        mfusedLocationClient = null
+        mLocationRequest = null
 
     }
 
@@ -118,8 +131,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
 
 
-
-    private val mLocationCallback = object : LocationCallback() {
+    private var mLocationCallback = object : LocationCallback() {
 
         override fun onLocationResult(locationresult: LocationResult) {
 
@@ -266,18 +278,43 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 call: Call<LocationResponse>,
                 response: Response<LocationResponse>
             ) {
+                if (response.isSuccessful) {
 
-                val locationList: LocationResponse? = response.body()
-                if (locationList != null) {
-                    locationResponse = locationList
+                    val locationList: LocationResponse? = response.body()
+                    if (locationList != null) {
+                        if (locationList.size > 0) {
+                            locationResponse = locationList
+
+                            /* Log.i("search", "${locationList?.get(0)?.name}")*/
+                            Log.i("response result refresh", finishRefresh.toString())
+
+                            finishRefresh = true
+                            refreshSearchedLocation()
+                        } else {
+                            Log.i("location error", "location not found")
+                        }
+                    }
+
+
+
+
+
+
+                } else {
+                    val rc = response.code()
+                    when (rc) {
+                        400 -> {
+                            Log.e("Error 400", "bad connection")
+                        }
+                        404 -> {
+                            Log.e("Error 404", "not found")
+                        }
+                        else -> {
+                            Log.e("Error", "Generic error")
+                        }
+                    }
                 }
 
-
-
-                Log.i("search", "${locationList?.get(0)?.name}")
-                Log.i("response result refresh", finishRefresh.toString())
-                finishRefresh = true
-                refreshSearchedLocation()
             }
 
             override fun onFailure(call: Call<LocationResponse>, t: Throwable) {
