@@ -64,6 +64,15 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>) :
             holder.itemBinding.root.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
         }
 
+        // Hanterar klickevent för varje prognos
+        holder.itemView.setOnClickListener(){
+
+
+            Log.i("clicked", forecast.temp.toString())
+
+
+        }
+
 
 
     }
