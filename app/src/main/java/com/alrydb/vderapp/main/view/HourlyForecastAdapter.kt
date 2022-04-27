@@ -1,23 +1,24 @@
 package com.alrydb.vderapp.main.view
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.alrydb.vderapp.R
-import com.alrydb.vderapp.databinding.ForecastItemBinding
+import com.alrydb.vderapp.databinding.FragmentHourlyBinding
 import com.alrydb.vderapp.databinding.HourlyForecastItemBinding
-import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
-import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import com.alrydb.vderapp.main.data.models.forecast.HourlyForecast
-import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
+class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, val context: Context) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
 
     inner class MainViewHolder(val itemBinding: HourlyForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
@@ -69,6 +70,18 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>) :
 
 
             Log.i("clicked", forecast.temp.toString())
+
+            val fragment = FragmentHourly()
+            val fragmentManager = (context as AppCompatActivity).supportFragmentManager
+            fragmentManager.beginTransaction().apply {
+                replace(R.id.fragment_hourly, fragment)
+                var text : TextView
+                text = fragment.requireView().findViewById(R.id.details_temp)
+                text.text = forecast.temp.toString()
+                commit()
+
+            }
+
 
 
         }

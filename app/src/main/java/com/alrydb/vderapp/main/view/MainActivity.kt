@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
         // Kod som hanterar vad som händer när sökvyn öppnas och stängs
         searchView.addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
             override fun onViewDetachedFromWindow(arg0: View) {
@@ -460,7 +461,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Skicka data som hämtas från api:n till adaptern
-            binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist)
+            binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity)
 
 
 

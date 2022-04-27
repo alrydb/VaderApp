@@ -183,7 +183,16 @@
         </androidx.recyclerview.widget.RecyclerView>
 
 
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+
+        android:id="@+id/fragment_hourly"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_nav"></FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
