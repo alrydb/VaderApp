@@ -12,11 +12,11 @@ data class HourlyForecast(
     @SerializedName("feels_like")
     val feelsLike: Double,
     val pressure: Int,
-    val humidity: Int,
+    val humidity: Double,
     @SerializedName("dew_point")
     val dew_point : Double,
     val uvi : Double,
-    val clouds: Int,
+    val clouds: Double,
     val visibility : Int,
     @SerializedName("wind_speed")
     val windSpeed : Double,
@@ -25,7 +25,8 @@ data class HourlyForecast(
     @SerializedName("wind_gust")
     val windGust : Double,
     val weather: List<Weather>,
-    val pop : Double
+    val pop : Double,
+    val rain : Rain?
 
 
 ) : Serializable

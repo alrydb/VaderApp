@@ -41,6 +41,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import android.view.View.OnAttachStateChangeListener
+import androidx.core.view.isInvisible
 import com.alrydb.vderapp.main.data.repo.LocationRepository
 
 
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
                 twentyFourHoursSelected = true
                 sevenDaysSelected = false
+                removeFragment()
 
                 return true
             }
@@ -162,9 +164,11 @@ class MainActivity : AppCompatActivity() {
 
         swipeRefreshLayout!!.setOnRefreshListener() {
 
+            removeFragment()
 
             if (networkEnabled() && locationEnabled()) {
                 refreshContent()
+
             } else if (!locationEnabled()) {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
@@ -193,6 +197,7 @@ class MainActivity : AppCompatActivity() {
                             showHourlyForecast()
                             Log.i("tab", "tab 1 selected")
                             twentyFourHoursSelected = true
+
 
 
                         }
@@ -255,7 +260,16 @@ class MainActivity : AppCompatActivity() {
 
 
 
+   private fun removeFragment()
+    {
+        binding.currentGroup.isInvisible = false
 
+        val fragmentManager = supportFragmentManager
+        fragmentManager.beginTransaction().apply {
+            fragmentManager.findFragmentById(R.id.fragment_hourly)?.let { remove(it).commitNow() }
+
+        }
+    }
 
     private fun refreshContent()
     {

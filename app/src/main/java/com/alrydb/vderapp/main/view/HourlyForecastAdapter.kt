@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.FragmentHourlyBinding
@@ -19,6 +21,9 @@ import java.util.*
 
 
 class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, val context: Context) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
+
+    private lateinit var fragmentHourly: FragmentHourly
+
 
     inner class MainViewHolder(val itemBinding: HourlyForecastItemBinding)
         :RecyclerView.ViewHolder(itemBinding.root){
@@ -71,16 +76,54 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
             Log.i("clicked", forecast.temp.toString())
 
-            val fragment = FragmentHourly()
+            fragmentHourly = FragmentHourly()
             val fragmentManager = (context as AppCompatActivity).supportFragmentManager
             fragmentManager.beginTransaction().apply {
-                replace(R.id.fragment_hourly, fragment)
-                var text : TextView
+                replace(R.id.fragment_hourly, fragmentHourly)
+
+               /* fragment.testFragment(forecast.temp.toString())*/
+
+                val group :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.current_group)
+                group.isInvisible = true
+                /*var text : TextView
                 text = fragment.requireView().findViewById(R.id.details_temp)
-                text.text = forecast.temp.toString()
-                commit()
+                text.text = forecast.temp.toString()*/
+                commitNow()
+
+
 
             }
+
+        /*    fragment.lifecycleScope.launchWhenCreated {
+
+            }
+
+
+*/
+
+
+            val calendar: Calendar = Calendar.getInstance()
+            calendar.setTimeInMillis((forecast.dt * 1000L))
+            val hour = SimpleDateFormat("HH")
+            val hourName = hour.format(calendar.time)
+            val dayDate = SimpleDateFormat("d")
+            val dayName = dayDate.format(calendar.time)
+            val monthDate = SimpleDateFormat("MMMM")
+            val monthName = monthDate.format(calendar.time)
+
+
+            fragmentHourly.showWeatherDetails( dayName + " " + monthName + " " + hourName + ": 00" , forecast.temp,
+                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity
+            )
+
+
+
+
+
+
+
+
+
 
 
 
@@ -93,6 +136,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
     override fun getItemCount(): Int {
         return hourlyForecastResponse.size
     }
+
 
 
 }

@@ -9,10 +9,14 @@
     <string name="temp_min">Min</string>
     <string name="temp_current">Temp</string>
     <string name="temp_feelslike">Känns som</string>
+    <string name="details_rain">Sannolikhet nederbörd</string>
+    <string name="details_wind">Vind</string>
+    <string name="details_humidity">Luftfuktighet</string>
+    <string name="details_clouds">Molnighet</string>
     <string name="tab_7days">7 dagar</string>
     <string name="tab_24h">24 timmar</string>
     <string name="app_label">Weatherapp</string>
-    <string name="search_hint">Sök</string>
+    <string name="search_hint">Sök stad/ort</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
