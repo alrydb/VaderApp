@@ -11,6 +11,8 @@ import android.widget.TextView
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.databinding.FragmentHourlyBinding
+import com.squareup.picasso.Picasso
+import org.w3c.dom.Text
 
 
 class FragmentHourly : Fragment() {
@@ -37,11 +39,16 @@ class FragmentHourly : Fragment() {
         fragmentBinding!!.detailsTemp.text = "hello world"
 
 
+        fragmentBinding!!.detailsClear.setOnClickListener(){
+            activity!!.onBackPressed()
+        }
+
+
 
     }
 
     @SuppressLint("SetTextI18n")
-    fun showWeatherDetails(dateTime: String, temp: Double, feelsLike: Double, description: String, rain : Double, wind : Double, clouds : Double, humidity : Double)
+    fun showWeatherDetails(dateTime: String, temp: Double, feelsLike: Double, description: String, rain : Double, wind : Double, clouds : Double, humidity : Double, icon : String)
     {
         if (activity?.isDestroyed == false && this.isAdded && view != null) {
             fragmentBinding!!.detailsDate.text =  dateTime
@@ -54,6 +61,15 @@ class FragmentHourly : Fragment() {
             fragmentBinding!!.detailsWind.text = resources.getString(R.string.details_wind) + " " + wind.toString()
             fragmentBinding!!.detailsClouds.text = resources.getString(R.string.details_clouds) + " " + clouds.toString()
             fragmentBinding!!.detailsHumidity.text = resources.getString(R.string.details_humidity) + " " + humidity.toString()
+
+            var cityTextView : TextView = activity!!.findViewById(R.id.city_name)
+            fragmentBinding!!.detailsCity.text = cityTextView.text
+
+            val uri = "https://openweathermap.org/img/w/" + icon + ".png"
+            Picasso.get().load(uri).into(fragmentBinding!!.detailsIcon)
+
+
+
 
             Log.i("fragment", "it worked")
         }

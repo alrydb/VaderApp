@@ -42,6 +42,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import android.view.View.OnAttachStateChangeListener
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.alrydb.vderapp.main.data.repo.LocationRepository
 
 
@@ -55,6 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     private var twentyFourHoursSelected : Boolean = true
     private var sevenDaysSelected: Boolean = false
+
+    var menuHidden : Boolean = false // setting state
 
 
     lateinit var adapter : DailyForecastAdapter
@@ -77,6 +80,10 @@ class MainActivity : AppCompatActivity() {
             setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
         }
 
+        if (menuHidden) {
+            for (i in 0 until menu.size()) menu.getItem(i).isVisible = false
+        }
+
 
 
 
@@ -88,6 +95,10 @@ class MainActivity : AppCompatActivity() {
                 binding.countryName.setVisibility(View.VISIBLE)
                 binding.imageView.setVisibility(View.VISIBLE)
 
+                binding.forecastGroup.isVisible = true
+                binding.currentGroup.isVisible = true
+
+
             }
 
             override fun onViewAttachedToWindow(arg0: View) {
@@ -95,6 +106,13 @@ class MainActivity : AppCompatActivity() {
                 binding.cityName.setVisibility(View.INVISIBLE)
                 binding.countryName.setVisibility(View.INVISIBLE)
                 binding.imageView.setVisibility(View.INVISIBLE)
+
+                binding.forecastGroup.isVisible = false
+                binding.currentGroup.isVisible = false
+
+
+
+
 
             }
         })
@@ -259,6 +277,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onBackPressed() {
+        val groupCurrentWeather :  androidx.constraintlayout.widget.Group = findViewById(R.id.current_group)
+        val groupMenu :  androidx.constraintlayout.widget.Group = findViewById(R.id.menu_group)
+        val groupForecast :  androidx.constraintlayout.widget.Group = findViewById(R.id.forecast_group)
+        groupCurrentWeather.isInvisible = false
+        groupMenu.isInvisible = false
+        groupForecast.isInvisible = false
+        binding.toolbarNav.isVisible = true
+        super.onBackPressed()
+    }
 
    private fun removeFragment()
     {

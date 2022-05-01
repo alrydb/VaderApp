@@ -102,6 +102,20 @@
         android:visibility="visible"
         app:constraint_referenced_ids="current_time,current_description, current_temp, current_wind,icon_weather" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/menu_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="city_name,country_name, imageView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/forecast_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="forecast_tab, refreshLayout" />
+
 
 
 
@@ -201,8 +215,8 @@
         android:id="@+id/fragment_hourly"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/forecast_tab"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_nav"></FrameLayout>
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintTop_toTopOf="parent"></FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"

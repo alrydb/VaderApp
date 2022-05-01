@@ -3,11 +3,14 @@ package com.alrydb.vderapp.main.view
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -83,12 +86,28 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
                /* fragment.testFragment(forecast.temp.toString())*/
 
-                val group :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.current_group)
-                group.isInvisible = true
+                val groupCurrentWeather :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.current_group)
+                val groupMenu :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.menu_group)
+                val groupForecast :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.forecast_group)
+                val menu : androidx.appcompat.widget.Toolbar =  context.findViewById(R.id.toolbar_nav)
+                /*val search : androidx.appcompat.widget.SearchView = context.findViewById(R.id.search)*/
+
+                /*val searchView = (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView)*/
+
+
+                groupCurrentWeather.isInvisible = true
+                groupMenu.isInvisible = true
+                groupForecast.isGone = true
+                menu.isInvisible = true
+
+
+
+
                 /*var text : TextView
                 text = fragment.requireView().findViewById(R.id.details_temp)
                 text.text = forecast.temp.toString()*/
-                commitNow()
+                addToBackStack(null)
+                commit()
 
 
 
@@ -101,6 +120,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
 */
 
+            fragmentManager.executePendingTransactions()
 
             val calendar: Calendar = Calendar.getInstance()
             calendar.setTimeInMillis((forecast.dt * 1000L))
@@ -112,8 +132,9 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
             val monthName = monthDate.format(calendar.time)
 
 
+
             fragmentHourly.showWeatherDetails( dayName + " " + monthName + " " + hourName + ": 00" , forecast.temp,
-                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity
+                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity, forecast.weather[0].icon
             )
 
 
