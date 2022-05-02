@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -155,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarNav)
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
         swipeRefreshLayout = binding.refreshLayout
+
 
 
         //skapa viewmodel

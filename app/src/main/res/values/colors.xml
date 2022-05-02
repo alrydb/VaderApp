@@ -11,6 +11,7 @@
     <color name="colorLightGray">#EBEBEB</color>
     <color name="colorPrimary">#4b86b4</color>
     <color name="colorPrimaryDark">#2a4d69</color>
-    <color name="colorAccent">#adcbe3</color>
+    <color name="colorAccent">#9DB9CF</color>
+    <color name="colorActionBar">#43779F</color>
 
 </resources>

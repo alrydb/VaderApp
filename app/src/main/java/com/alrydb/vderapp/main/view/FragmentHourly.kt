@@ -13,6 +13,7 @@ import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.databinding.FragmentHourlyBinding
 import com.squareup.picasso.Picasso
 import org.w3c.dom.Text
+import java.text.DecimalFormat
 
 
 class FragmentHourly : Fragment() {
@@ -52,15 +53,18 @@ class FragmentHourly : Fragment() {
     {
         if (activity?.isDestroyed == false && this.isAdded && view != null) {
             fragmentBinding!!.detailsDate.text =  dateTime
-            fragmentBinding!!.detailsTemp.text = resources.getString(R.string.temp_current) + " " + temp.toString().substringBefore(".") + "°C"
+            fragmentBinding!!.detailsTemp.text =   " " + temp.toString().substringBefore(".") + "°C"
             fragmentBinding!!.detailsFeelsLike.text = resources.getString(R.string.temp_feelslike) + " " + feelsLike.toString().substringBefore(".") + "°C"
             fragmentBinding!!.detailsDescription.text = description.replaceFirstChar {
                 description[0].uppercase()
             }
-            fragmentBinding!!.detailsRain.text = resources.getString(R.string.details_rain) + " " + rain.toString()
-            fragmentBinding!!.detailsWind.text = resources.getString(R.string.details_wind) + " " + wind.toString()
-            fragmentBinding!!.detailsClouds.text = resources.getString(R.string.details_clouds) + " " + clouds.toString()
-            fragmentBinding!!.detailsHumidity.text = resources.getString(R.string.details_humidity) + " " + humidity.toString()
+
+
+
+            fragmentBinding!!.detailsRain.text = resources.getString(R.string.details_rain) + " " + (rain * 100).toInt().toString() + "%"
+            fragmentBinding!!.detailsWind.text = resources.getString(R.string.details_wind) + " " + wind.toInt().toString() + " m/s"
+            fragmentBinding!!.detailsClouds.text = resources.getString(R.string.details_clouds) + " " + clouds.toInt().toString() + "%"
+            fragmentBinding!!.detailsHumidity.text = resources.getString(R.string.details_humidity) + " " + humidity.toInt().toString() + "%"
 
             var cityTextView : TextView = activity!!.findViewById(R.id.city_name)
             fragmentBinding!!.detailsCity.text = cityTextView.text
