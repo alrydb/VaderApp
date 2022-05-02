@@ -171,6 +171,32 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
 
 
+        // Bottom navigation
+        binding.bottomNav.setOnItemSelectedListener{
+
+            Log.i("bottomnav" , it.itemId.toString())
+
+            when (it.title){
+
+                "Prognos" -> {}
+
+                "Favoriter" -> {val intent = Intent(this, FavoritesActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)}
+
+                "Inställningar" -> {val intent = Intent(this, SettingsActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                }
+
+            }
+
+            true
+
+        }
+
+
+
         //val weatherRepository = WeatherRepository()
         //val dailyForecastRepository = DailyForecastRepository()
 
@@ -300,6 +326,11 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+
+
+
+
 
     private fun refreshContent()
     {
