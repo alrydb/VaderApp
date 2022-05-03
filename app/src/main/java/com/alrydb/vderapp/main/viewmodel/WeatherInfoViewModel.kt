@@ -109,7 +109,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             lon = locationResponse[0].lon
 
             getLocationWeatherDetails()
-            getLocationForecastDetails()
+            /*getLocationForecastDetails()*/
             getLocationHourlyForecastDetails()
 
             stopLocationUpdates()

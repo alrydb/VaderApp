@@ -44,6 +44,9 @@ import com.squareup.picasso.Picasso
 import android.view.View.OnAttachStateChangeListener
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
+import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
+import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import com.alrydb.vderapp.main.data.repo.LocationRepository
 
 
@@ -57,6 +60,8 @@ class MainActivity : AppCompatActivity() {
 
     private var twentyFourHoursSelected : Boolean = true
     private var sevenDaysSelected: Boolean = false
+
+
 
     var menuHidden : Boolean = false // setting state
 
@@ -126,8 +131,14 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getSearchedLocationDetails(query)
                 (menu.findItem(R.id.search)).collapseActionView()
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
-                twentyFourHoursSelected = true
-                sevenDaysSelected = false
+                /*twentyFourHoursSelected = true*/
+               /* sevenDaysSelected = false*/
+                showHourlyForecast()
+
+
+
+
+
                 removeFragment()
 
                 return true
@@ -156,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarNav)
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
         swipeRefreshLayout = binding.refreshLayout
+        binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
 
 
 
@@ -219,6 +231,7 @@ class MainActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
 
+
             } else if (!networkEnabled()) {
 
                 Toast.makeText(
@@ -242,16 +255,17 @@ class MainActivity : AppCompatActivity() {
                         binding.forecastTab.getTabAt(0) -> {
                             showHourlyForecast()
                             Log.i("tab", "tab 1 selected")
-                            twentyFourHoursSelected = true
+                            /*twentyFourHoursSelected = true*/
 
 
 
                         }
                         binding.forecastTab.getTabAt(1) -> {
+                            viewModel!!.refreshDailyForecast()
                             showDailyForecast()
                             Log.i("tab", "tab 2 selected")
 
-                            sevenDaysSelected = true
+                            /*sevenDaysSelected = true*/
 
                         }
                     }
@@ -263,7 +277,7 @@ class MainActivity : AppCompatActivity() {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
                             Log.i("tab", "tab 1 unselected")
-                            twentyFourHoursSelected = false
+                            /*twentyFourHoursSelected = false*/
 
 
                         }
@@ -271,7 +285,7 @@ class MainActivity : AppCompatActivity() {
                         binding.forecastTab.getTabAt(1) -> {
                             Log.i("tab", "tab 2 unselected")
 
-                            sevenDaysSelected = false
+                            /*sevenDaysSelected = false*/
 
                         }
 
@@ -283,13 +297,13 @@ class MainActivity : AppCompatActivity() {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
                             Log.i("tab", "tab 1 reselected")
-                            twentyFourHoursSelected = true
+                            /*twentyFourHoursSelected = true*/
 
                         }
 
                         binding.forecastTab.getTabAt(1) -> {
                             Log.i("tab", "tab 2 reselected")
-                            sevenDaysSelected = true
+                           /* sevenDaysSelected = true*/
                         }
 
                     }
@@ -299,6 +313,18 @@ class MainActivity : AppCompatActivity() {
 
             })
 
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        /*if (networkEnabled() && locationEnabled()) {
+            refreshContent()
+
+        }*/
 
 
 
@@ -341,18 +367,19 @@ class MainActivity : AppCompatActivity() {
 
         showCurrentWeather()
         Log.i("help",tab.toString())
-        if (twentyFourHoursSelected)
+        if (/*twentyFourHoursSelected*/ tab == 0)
         {
             viewModel.refreshLocationData(this@MainActivity)
             viewModel.refreshHourlyForecast()
             showHourlyForecast()
 
         }
-        else if (sevenDaysSelected)
+        else if (/*sevenDaysSelected*/ tab == 1)
         {
             viewModel.refreshLocationData(this@MainActivity)
             viewModel.refreshDailyForecast()
             showDailyForecast()
+
 
         }
 
@@ -411,8 +438,7 @@ class MainActivity : AppCompatActivity() {
                             viewModel.requestLocationData(this@MainActivity)
                             locationEnabled = true
 
-                            /*showCurrentWeather()
-                            showDailyForecast()*/
+                           refreshContent()
 
                         }
                         // Om behörigheter nekas av användaren
@@ -420,7 +446,8 @@ class MainActivity : AppCompatActivity() {
 
                             Toast.makeText(this@MainActivity, "Behörighet till mobilens platstjänst har nekats", Toast.LENGTH_SHORT).show()
 
-                        }                        }
+                        }
+                    }
 
                     override fun onPermissionRationaleShouldBeShown(
                         permissions: MutableList<PermissionRequest>?,
@@ -487,7 +514,6 @@ class MainActivity : AppCompatActivity() {
         {
             swipeRefreshLayout!!.isRefreshing = false
 
-
         }
     }
 
@@ -497,30 +523,44 @@ class MainActivity : AppCompatActivity() {
 
     private fun showDailyForecast()
     {
+        binding.forecastRv.adapter = null
         // Visa 7 dagars-prognos för nuvarande plats
+
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
 
                 // Skicka data som hämtas från api:n till adaptern
+               binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
 
-                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
+
 
 
         })
+
        if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
 
         }
 
+        Log.i("SHOW", "SHOW DAILY CALLED")
+        Log.i("SHOW", binding.forecastRv.adapter.toString())
+
+
     }
+
+
+
 
     private fun showHourlyForecast()
     {
+       /* binding.forecastRv.adapter = null*/
         // Visa 7 dagars-prognos för nuvarande plats
         viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+
 
             var adapterlist : MutableList<HourlyForecast> = mutableListOf()
 
@@ -540,14 +580,31 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+
         })
+
         if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
 
         }
 
+        Log.i("SHOW", "SHOW HOURLY CALLED")
+        Log.i("SHOW", binding.forecastRv.adapter.toString())
+
     }
+
+   /* private fun setHourlyAdapter() {
+        binding?.forecastRv?.adapter = HourlyForecastAdapter(hourlyAdapterList, this@MainActivity)
+
+    }
+
+    private fun setDailyAdapter() {
+        binding?.forecastRv?.adapter = DailyForecastAdapter(dailyAdapterList)
+
+    }*/
+
 
 
 
