@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     private var twentyFourHoursSelected : Boolean = true
     private var sevenDaysSelected: Boolean = false
 
+    private var showHourly : Boolean = true
+
 
 
     var menuHidden : Boolean = false // setting state
@@ -225,6 +227,8 @@ class MainActivity : AppCompatActivity() {
             removeFragment()
 
             if (networkEnabled() && locationEnabled()) {
+
+
                 refreshContent()
 
             } else if (!locationEnabled()) {
@@ -253,7 +257,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
+                            showHourly = true
                             showHourlyForecast()
+
+                           /* refreshContent()*/
                             Log.i("tab", "tab 1 selected")
                             /*twentyFourHoursSelected = true*/
 
@@ -261,9 +268,13 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         binding.forecastTab.getTabAt(1) -> {
-                            viewModel!!.refreshDailyForecast()
+                           /* viewModel.refreshDailyForecast()*/
+                            showHourly = false
                             showDailyForecast()
+
+                            refreshContent()
                             Log.i("tab", "tab 2 selected")
+
 
                             /*sevenDaysSelected = true*/
 
@@ -332,12 +343,13 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        val groupCurrentWeather :  androidx.constraintlayout.widget.Group = findViewById(R.id.current_group)
+        //Städa
+        /*val groupCurrentWeather :  androidx.constraintlayout.widget.Group = findViewById(R.id.current_group)
         val groupMenu :  androidx.constraintlayout.widget.Group = findViewById(R.id.menu_group)
-        val groupForecast :  androidx.constraintlayout.widget.Group = findViewById(R.id.forecast_group)
-        groupCurrentWeather.isInvisible = false
-        groupMenu.isInvisible = false
-        groupForecast.isInvisible = false
+        val groupForecast :  androidx.constraintlayout.widget.Group = findViewById(R.id.forecast_group)*/
+        binding.currentGroup.isInvisible = false
+        binding.menuGroup.isInvisible = false
+        binding.forecastGroup.isInvisible = false
         binding.toolbarNav.isVisible = true
         super.onBackPressed()
     }
@@ -365,18 +377,19 @@ class MainActivity : AppCompatActivity() {
 
         var tab = binding.forecastTab.selectedTabPosition
 
+        viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
         Log.i("help",tab.toString())
         if (/*twentyFourHoursSelected*/ tab == 0)
         {
-            viewModel.refreshLocationData(this@MainActivity)
+
             viewModel.refreshHourlyForecast()
             showHourlyForecast()
 
         }
         else if (/*sevenDaysSelected*/ tab == 1)
         {
-            viewModel.refreshLocationData(this@MainActivity)
+
             viewModel.refreshDailyForecast()
             showDailyForecast()
 
@@ -531,8 +544,10 @@ class MainActivity : AppCompatActivity() {
 
 
                 // Skicka data som hämtas från api:n till adaptern
-               binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
-
+            if(!showHourly)
+            {
+                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
+            }
 
 
 
@@ -560,8 +575,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
-
             var adapterlist : MutableList<HourlyForecast> = mutableListOf()
 
             for(i in hourlyForecastResponse.hourly)
@@ -576,9 +589,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Skicka data som hämtas från api:n till adaptern
-            binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity)
-
-
+            if(showHourly)
+            {
+                binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity)
+            }
 
 
 

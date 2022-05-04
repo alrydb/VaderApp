@@ -68,8 +68,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         mLocationRequest = create().apply {
-            interval = 60000
-            fastestInterval = 30000
+            interval = 600000
+            fastestInterval = 300000
 
             priority = PRIORITY_HIGH_ACCURACY
         }
@@ -186,7 +186,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                     val weatherList: WeatherResponse? = response.body()
 
                     // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
-                    currentWeatherList.value = weatherList
+                    currentWeatherList.postValue(weatherList)
 
 
                     Log.i("Response result", "$weatherList")
@@ -253,7 +253,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             ) {
 
                 val forecastList: HourlyForecastResponse? = response.body()
-                hourlyForecastList.value = forecastList
+                hourlyForecastList.postValue(forecastList)
 
                 Log.i("Response result HOURLY", "$forecastList")
                 Log.i("response result refresh", finishRefresh.toString())
