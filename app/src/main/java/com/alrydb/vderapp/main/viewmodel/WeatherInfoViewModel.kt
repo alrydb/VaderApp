@@ -37,8 +37,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
    /* private var mLocationCallback : LocationCallback? = null*/
 
 
-    private var lat: Double = 0.0 // latitud
-    private var lon: Double = 0.0 // longitud
+    // Sätter latitud och longitud till att vara Örebro som standard
+    private var lat: Double = 59.2747
+    private var lon: Double = 15.2151
+
     private lateinit var locationResponse : LocationResponse
 
     var finishRefresh: Boolean = false
@@ -109,7 +111,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             lon = locationResponse[0].lon
 
             getLocationWeatherDetails()
-            /*getLocationForecastDetails()*/
+            getLocationForecastDetails()
             getLocationHourlyForecastDetails()
 
             stopLocationUpdates()

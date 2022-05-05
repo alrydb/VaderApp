@@ -1,10 +1,11 @@
 package com.alrydb.vderapp.main.view
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,18 +15,14 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.MenuItemCompat
-import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityMainBinding
-import com.alrydb.vderapp.main.data.models.forecast.DailyForecast
 import com.alrydb.vderapp.main.data.models.forecast.HourlyForecast
 import com.alrydb.vderapp.main.viewmodel.ViewModelFactory
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
@@ -44,9 +41,6 @@ import com.squareup.picasso.Picasso
 import android.view.View.OnAttachStateChangeListener
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
-import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
-import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import com.alrydb.vderapp.main.data.repo.LocationRepository
 
 
@@ -61,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private var twentyFourHoursSelected : Boolean = true
     private var sevenDaysSelected: Boolean = false
 
-    private var showHourly : Boolean = true
+    private var showHourlyAdapter : Boolean = true
 
 
 
@@ -224,6 +218,8 @@ class MainActivity : AppCompatActivity() {
 
         swipeRefreshLayout!!.setOnRefreshListener() {
 
+            Log.i("perms", locationEnabled().toString())
+
             removeFragment()
 
             if (networkEnabled() && locationEnabled()) {
@@ -234,6 +230,8 @@ class MainActivity : AppCompatActivity() {
             } else if (!locationEnabled()) {
 
                 Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout!!.isRefreshing = false
+
 
 
             } else if (!networkEnabled()) {
@@ -257,7 +255,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
-                            showHourly = true
+                            showHourlyAdapter = true
                             showHourlyForecast()
 
                            /* refreshContent()*/
@@ -268,11 +266,11 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         binding.forecastTab.getTabAt(1) -> {
-                           /* viewModel.refreshDailyForecast()*/
-                            showHourly = false
+                            /*viewModel.refreshDailyForecast()*/
+                            showHourlyAdapter = false
                             showDailyForecast()
 
-                            refreshContent()
+                            /*refreshContent()*/
                             Log.i("tab", "tab 2 selected")
 
 
@@ -327,19 +325,38 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+
+
     }
 
-    override fun onResume() {
+   /* override fun onResume() {
+
+
+      if (networkEnabled() && locationEnabled()) {
+           refreshContent()
+           Log.i("perms" ,"granted ONRESUME")
+
+
+        }
+
         super.onResume()
 
-        /*if (networkEnabled() && locationEnabled()) {
+    }*/
+
+    /*override fun onRestart() {
+
+        if (networkEnabled() && locationEnabled()) {
             refreshContent()
-
-        }*/
-
+            Log.i("perms" ,"granted ONRESUME")
 
 
+        }
+
+        super.onRestart()
     }
+*/
+
 
 
     override fun onBackPressed() {
@@ -364,6 +381,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
 
 
 
@@ -448,10 +466,19 @@ class MainActivity : AppCompatActivity() {
                         // Om behörigheter tillåts av användaren
                         if (report!!.areAllPermissionsGranted()){
 
+
+
+
                             viewModel.requestLocationData(this@MainActivity)
                             locationEnabled = true
 
-                           refreshContent()
+
+
+                            Log.i("perms", "granted")
+                            /*showCurrentWeather()
+                            showHourlyForecast()*/
+
+                          /* refreshContent()*/
 
                         }
                         // Om behörigheter nekas av användaren
@@ -473,6 +500,8 @@ class MainActivity : AppCompatActivity() {
 
         }
         return locationEnabled
+
+
     }
 
 
@@ -484,14 +513,42 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     val uri = Uri.fromParts("package", packageName, null)
+
                     intent.data = uri
+
+
+
+                    Log.i("perms", packageName)
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
+
+                    moveTaskToBack(true)
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                    System.exit(1)
+
+
+
+                  /*  val i = Intent(this@MainActivity, MainActivity::class.java)
+                    i.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(i)*/
+
+                    /*Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                        val i = Intent(this@MainActivity, MainActivity::class.java)
+                        i.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(i)
+                        viewModel.requestLocationData(this@MainActivity)
+                        refreshContent()
+
+
+                    }, 5000)*/
                 }
                 catch(e: ActivityNotFoundException){
                     e.printStackTrace()
                 }
             }
-            .setNegativeButton("Cancel"){
+            .setNegativeButton("Avbryt"){
                 dialog, _ ->
                 dialog.dismiss()
             }.show()
@@ -509,7 +566,17 @@ class MainActivity : AppCompatActivity() {
 
 
             // Visa väderdata för nuvarande plats och tid
-            binding.cityName.text = weatherResponse.name
+
+            // Tar bort 'kommun' från vissa resultat
+            if (weatherResponse.name.contains("Municipality"))
+            {
+                binding.cityName.text = weatherResponse.name.substringBefore("Municipality")
+            }
+            else
+            {
+                binding.cityName.text = weatherResponse.name
+            }
+
             binding.countryName.text = weatherResponse.sys.country
             binding.currentWind.text = weatherResponse.wind.speed.toInt().toString() + " m/s"
             binding.currentTemp.text = weatherResponse.main.temp.toString().substringBefore(".") + "°C"
@@ -544,7 +611,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 // Skicka data som hämtas från api:n till adaptern
-            if(!showHourly)
+            if(!showHourlyAdapter)
             {
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
             }
@@ -589,7 +656,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Skicka data som hämtas från api:n till adaptern
-            if(showHourly)
+            if(showHourlyAdapter)
             {
                 binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity)
             }
