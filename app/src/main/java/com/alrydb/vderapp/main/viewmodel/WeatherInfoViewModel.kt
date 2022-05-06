@@ -70,8 +70,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         mLocationRequest = create().apply {
-            interval = 600000
-            fastestInterval = 300000
+            interval = 60000
+            fastestInterval = 30000
 
             priority = PRIORITY_HIGH_ACCURACY
         }
@@ -183,6 +183,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 call: Call<WeatherResponse>,
                 response: Response<WeatherResponse>
             ) {
+
                 if (response!!.isSuccessful) {
                     // All data från vårt gson objekt, dvs vår deserialiserade json data
                     val weatherList: WeatherResponse? = response.body()

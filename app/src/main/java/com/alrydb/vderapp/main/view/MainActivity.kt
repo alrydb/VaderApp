@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
 
         swipeRefreshLayout!!.setOnRefreshListener() {
 
-            Log.i("perms", locationEnabled().toString())
+            /*Log.i("perms", locationEnabled().toString())*/
 
             removeFragment()
 
