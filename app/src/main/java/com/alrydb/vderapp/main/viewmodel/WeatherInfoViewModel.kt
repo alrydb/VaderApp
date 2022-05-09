@@ -1,21 +1,23 @@
 package com.alrydb.vderapp.main.viewmodel
 
+//import android.location.LocationRequest
+
+import android.R
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
-
-//import android.location.LocationRequest
-
 import android.os.Looper
 import android.util.Log
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.models.forecast.DailyForecastResponse
 import com.alrydb.vderapp.main.data.models.forecast.HourlyForecastResponse
 import com.alrydb.vderapp.main.data.models.location.LocationResponse
+import com.alrydb.vderapp.main.data.models.weather.WeatherResponse
 import com.alrydb.vderapp.main.data.repo.DailyForecastRepository
 import com.alrydb.vderapp.main.data.repo.HourlyForecastRepository
 import com.alrydb.vderapp.main.data.repo.LocationRepository
@@ -24,10 +26,10 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationRequest.create
 import com.google.android.gms.tasks.CancellationTokenSource
-import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, private val dailyForecastRepository: DailyForecastRepository, private val hourlyForecastRepository: HourlyForecastRepository, private val locationRepository: LocationRepository): AndroidViewModel(Application()) {
 
@@ -44,6 +46,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     private lateinit var locationResponse : LocationResponse
 
     var finishRefresh: Boolean = false
+
+    // Listor som innehåller och uppdateras med väderdata som hämtas från vår API
     val currentWeatherList: MutableLiveData<WeatherResponse> = MutableLiveData()
     val dailyForecastList: MutableLiveData<DailyForecastResponse> = MutableLiveData()
     val hourlyForecastList: MutableLiveData<HourlyForecastResponse> = MutableLiveData()
@@ -70,8 +74,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         mLocationRequest = create().apply {
-            interval = 60000
-            fastestInterval = 30000
+            interval = 120000
+            fastestInterval = 60000
 
             priority = PRIORITY_HIGH_ACCURACY
         }
@@ -115,7 +119,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationHourlyForecastDetails()
 
             stopLocationUpdates()
-
     }
 
 
@@ -173,6 +176,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     private fun getLocationWeatherDetails() {
 
+        finishRefresh = false
         val response = weatherRepository.getWeather(lat, lon)
 
         //Skickar vårt HTTP GET request asynkront
@@ -184,15 +188,19 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 response: Response<WeatherResponse>
             ) {
 
+
+
                 if (response!!.isSuccessful) {
+
                     // All data från vårt gson objekt, dvs vår deserialiserade json data
                     val weatherList: WeatherResponse? = response.body()
 
                     // Tilldela värdet på weatherlist, dvs vår json data, till vår MutableLivedata 'currentWeatherlist' som vår view sedan observerar
                     currentWeatherList.postValue(weatherList)
 
-
                     Log.i("Response result", "$weatherList")
+                    finishRefresh = true
+
 
                 } else {
                     val rc = response.code()
@@ -212,28 +220,37 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
                 Log.e("Error", t!!.message.toString())
-                finishRefresh = true
+
             }
 
         })
+
+
 
     }
 
 
    private fun getLocationForecastDetails() {
 
+
+       finishRefresh = false
         val response = dailyForecastRepository.getDailyForecast(lat, lon)
         response.enqueue(object : Callback<DailyForecastResponse> {
             override fun onResponse(
                 call: Call<DailyForecastResponse>,
                 response: Response<DailyForecastResponse>
             ) {
+                if (response.isSuccessful)
+                {
 
-                val forecastList: DailyForecastResponse? = response.body()
-                dailyForecastList.value = forecastList
+                    val forecastList: DailyForecastResponse? = response.body()
+                    dailyForecastList.postValue(forecastList)
 
-                Log.i("Response result", "$forecastList")
-                finishRefresh = true
+                    Log.i("Response result", "$forecastList")
+                    finishRefresh = true
+                }
+
+
             }
 
             override fun onFailure(call: Call<DailyForecastResponse>, t: Throwable) {
@@ -248,6 +265,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     private fun getLocationHourlyForecastDetails() {
 
+
+        finishRefresh = false
         val response = hourlyForecastRepository.getHourlyForecast(lat, lon)
         response.enqueue(object : Callback<HourlyForecastResponse> {
             override fun onResponse(
@@ -255,12 +274,17 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 response: Response<HourlyForecastResponse>
             ) {
 
-                val forecastList: HourlyForecastResponse? = response.body()
-                hourlyForecastList.postValue(forecastList)
+                if(response.isSuccessful)
+                {
+                    val forecastList: HourlyForecastResponse? = response.body()
+                    hourlyForecastList.postValue(forecastList)
 
-                Log.i("Response result HOURLY", "$forecastList")
-                Log.i("response result refresh", finishRefresh.toString())
-                finishRefresh = true
+                    Log.i("Response result HOURLY", "$forecastList")
+                    Log.i("response result refresh", finishRefresh.toString())
+                    finishRefresh = true
+
+                }
+
             }
 
             override fun onFailure(call: Call<HourlyForecastResponse>, t: Throwable) {
@@ -273,7 +297,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-     fun getSearchedLocationDetails(location : String?) {
+     fun getSearchedLocationDetails(location : String?, context: Context) {
+
 
         val response = locationRepository.getSearchedLocation(location ?: "London")
         response.enqueue(object : Callback<LocationResponse> {
@@ -281,26 +306,24 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 call: Call<LocationResponse>,
                 response: Response<LocationResponse>
             ) {
-                if (response.isSuccessful) {
 
+                if (response.isSuccessful) {
                     val locationList: LocationResponse? = response.body()
                     if (locationList != null) {
                         if (locationList.size > 0) {
                             locationResponse = locationList
 
                             /* Log.i("search", "${locationList?.get(0)?.name}")*/
-                            Log.i("response result refresh", finishRefresh.toString())
 
-                            finishRefresh = true
+
+
                             refreshSearchedLocation()
+
+
                         } else {
-                            Log.i("location error", "location not found")
+                            Toast.makeText(context, "Kunde inte hitta den sökta platsen", Toast.LENGTH_SHORT).show()
                         }
                     }
-
-
-
-
 
 
                 } else {
@@ -326,7 +349,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
         })
 
-        Log.i("response result refresh", finishRefresh.toString())
+         Log.i("response result refresh", finishRefresh.toString())
     }
 
 }

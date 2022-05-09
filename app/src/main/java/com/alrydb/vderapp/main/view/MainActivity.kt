@@ -124,7 +124,11 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.i("search",query ?: "tom" )
-                viewModel.getSearchedLocationDetails(query)
+                if (networkEnabled()) {
+                    viewModel.getSearchedLocationDetails(query, this@MainActivity)
+                }
+
+
                 (menu.findItem(R.id.search)).collapseActionView()
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
                 /*twentyFourHoursSelected = true*/
@@ -164,6 +168,7 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
         swipeRefreshLayout = binding.refreshLayout
         binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
+
 
 
 
@@ -214,6 +219,19 @@ class MainActivity : AppCompatActivity() {
             refreshContent()
         }
 
+        // Om appen har tillgång till internet men inte plats så visas en väderprognos över Örebro som standard
+        if (networkEnabled() && !locationEnabled()){
+
+            viewModel.refreshCurrentWeather()
+            viewModel.refreshHourlyForecast()
+            viewModel.refreshDailyForecast()
+            showCurrentWeather()
+            showHourlyForecast()
+            Log.i("launch" ,"visa örebro vid launch")
+
+        }
+
+
         // När användaren refreshar appen
 
         swipeRefreshLayout!!.setOnRefreshListener() {
@@ -229,7 +247,7 @@ class MainActivity : AppCompatActivity() {
 
             } else if (!locationEnabled()) {
 
-                Toast.makeText(this, "Plats är inte aktiverad", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Plats är inte aktiverad, kan inte hämta väderdata för aktuell plats", Toast.LENGTH_SHORT).show()
                 swipeRefreshLayout!!.isRefreshing = false
 
 
@@ -378,7 +396,7 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().apply {
             fragmentManager.findFragmentById(R.id.fragment_hourly)?.let { remove(it).commitNow() }
-
+            fragmentManager.findFragmentById(R.id.fragment_daily)?.let { remove(it).commitNow() }
         }
     }
 
@@ -435,7 +453,7 @@ class MainActivity : AppCompatActivity() {
                     "Kunde inte koppla upp till internet, väderdata kan inte hämtas",
                     Toast.LENGTH_SHORT
                 ).show()
-            }, 5000)
+            }, 1000)
 
         }
         return networkEnabled
@@ -449,7 +467,7 @@ class MainActivity : AppCompatActivity() {
         // Kollar om platstjänsten är aktiverad
         if(!viewModel.isLocationEnabled(this)){
 
-            Toast.makeText(this, "Platstjänsten är inte aktiverad", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Platstjänsten är inte aktiverad, aktivera platstjänsten för att hämta aktuell väderdata", Toast.LENGTH_SHORT).show()
 
             //Om platstjänsten inte är aktiverad så omdirigeras användaren
             // Till mobilens inställningar för platstjänst
@@ -594,6 +612,7 @@ class MainActivity : AppCompatActivity() {
         {
             swipeRefreshLayout!!.isRefreshing = false
 
+
         }
     }
 
@@ -613,7 +632,7 @@ class MainActivity : AppCompatActivity() {
                 // Skicka data som hämtas från api:n till adaptern
             if(!showHourlyAdapter)
             {
-                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse)
+                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse, this)
             }
 
 
@@ -623,6 +642,7 @@ class MainActivity : AppCompatActivity() {
        if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
+
 
         }
 
@@ -668,6 +688,7 @@ class MainActivity : AppCompatActivity() {
         if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
+
 
         }
 

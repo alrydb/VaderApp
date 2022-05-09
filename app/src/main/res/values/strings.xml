@@ -13,6 +13,9 @@
     <string name="details_wind">Vind</string>
     <string name="details_humidity">Luftfuktighet</string>
     <string name="details_clouds">Molnighet</string>
+    <string name="details_sunrise">Soluppgång</string>
+    <string name="details_sunset">Solnedgång</string>
+    <string name="local_time">Lokal tid</string>
     <string name="tab_7days">7 dagar</string>
     <string name="tab_24h">24 timmar</string>
     <string name="title_settings">Inställningar</string>
