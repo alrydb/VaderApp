@@ -146,11 +146,33 @@
         android:id="@+id/details_sunset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/details_sunrise"
         tools:text="sunset" />
+
+    <ImageView
+        android:id="@+id/details_icon_sunrise"
+        android:layout_width="64sp"
+        android:layout_height="64sp"
+        android:layout_marginTop="-28dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@+id/details_sunrise"
+        app:layout_constraintTop_toTopOf="@+id/details_sunrise"
+        tools:src="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/details_icon_sunset"
+        android:layout_width="64sp"
+        android:layout_height="64sp"
+        android:layout_marginTop="-28dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toStartOf="@+id/details_sunset"
+        app:layout_constraintTop_toTopOf="@+id/details_sunset"
+        tools:src="@tools:sample/avatars" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

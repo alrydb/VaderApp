@@ -1,6 +1,5 @@
 package com.alrydb.vderapp.main.view
 
-import android.R.attr.country
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, val context: Context) : RecyclerView.Adapter<DailyForecastAdapter.MainViewHolder>() {
+class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, val context: Context, val timeZone: String) : RecyclerView.Adapter<DailyForecastAdapter.MainViewHolder>() {
 
     private lateinit var fragmentDaily: FragmentDaily
 
@@ -116,7 +115,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
             fragmentManager.executePendingTransactions()
 
 
-            val timeZone = TimeZone.getTimeZone(dailyForecastResponse.timezone)
+            val tz = TimeZone.getTimeZone(timeZone)
 
             Log.i("timezone", dailyForecastResponse.timezone)
             val calendarTime: Calendar = Calendar.getInstance()
@@ -133,7 +132,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
 
            /* calendarSunrise.setTimeZone(timeZone)*/
             val sunriseFormat = SimpleDateFormat("HH:mm")
-            sunriseFormat.setTimeZone(timeZone)
+            sunriseFormat.setTimeZone(tz)
             val sunriseTime = sunriseFormat.format(calendarSunrise.time)
 
 
@@ -143,7 +142,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
             calendarSunset.setTimeInMillis((forecast.sunset) * 1000L)
 
             val sunsetFormat = SimpleDateFormat("HH:mm")
-            sunsetFormat.setTimeZone(timeZone)
+            sunsetFormat.setTimeZone(tz)
             val sunsetTime = sunsetFormat.format(calendarSunset.time)
 
 

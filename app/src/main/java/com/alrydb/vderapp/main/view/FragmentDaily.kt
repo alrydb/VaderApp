@@ -77,6 +77,9 @@ class FragmentDaily : Fragment() {
             val uri = "https://openweathermap.org/img/w/" + icon + ".png"
             Picasso.get().load(uri).into(fragmentBinding!!.detailsIcon)
 
+            Picasso.get().load("https://openweathermap.org/img/w/" + "02d" + ".png").into(fragmentBinding!!.detailsIconSunrise)
+            Picasso.get().load("https://openweathermap.org/img/w/" + "02n" + ".png").into(fragmentBinding!!.detailsIconSunset)
+
 
 
 

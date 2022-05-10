@@ -39,6 +39,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.squareup.picasso.Picasso
 import android.view.View.OnAttachStateChangeListener
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.alrydb.vderapp.main.data.repo.LocationRepository
@@ -157,10 +158,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //Tvinga appen att köras med ljust tema även om mörkt tema är aktiverat
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
 
         // Få referenser till alla ui-komponenter med hjälp av viewbinding
         binding = ActivityMainBinding.inflate(layoutInflater)
+
 
         //Rendera UI-element
         setContentView(binding.root)
@@ -627,12 +632,12 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
+                val timeZone = dailyForecastResponse.timezone
 
                 // Skicka data som hämtas från api:n till adaptern
             if(!showHourlyAdapter)
             {
-                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse, this)
+                binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse, this, timeZone)
             }
 
 
@@ -663,6 +668,7 @@ class MainActivity : AppCompatActivity() {
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
             var adapterlist : MutableList<HourlyForecast> = mutableListOf()
+            val timeZone = hourlyForecastResponse.timezone
 
             for(i in hourlyForecastResponse.hourly)
             {
@@ -678,7 +684,7 @@ class MainActivity : AppCompatActivity() {
             // Skicka data som hämtas från api:n till adaptern
             if(showHourlyAdapter)
             {
-                binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity)
+                binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity, timeZone )
             }
 
 

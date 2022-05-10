@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, val context: Context) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
+class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, val context: Context, val timeZone: String) : RecyclerView.Adapter<HourlyForecastAdapter.MainViewHolder>() {
 
     private lateinit var fragmentHourly: FragmentHourly
 
@@ -43,7 +43,9 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
             Log.i("time", "${hourlyForecast.dt}")
             calendar.setTimeInMillis((hourlyForecast.dt * 1000L))
 
+            val tz = TimeZone.getTimeZone(timeZone)
             val hour = SimpleDateFormat("HH")
+            hour.setTimeZone(tz)
             val hourName = hour.format(calendar.time)
 
             itemBinding.tvHour.text = "Kl " + hourName.toString() + ": 00"
@@ -124,7 +126,9 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
             val calendar: Calendar = Calendar.getInstance()
             calendar.setTimeInMillis((forecast.dt * 1000L))
+            val tz = TimeZone.getTimeZone(timeZone)
             val hour = SimpleDateFormat("HH")
+            hour.setTimeZone(tz)
             val hourName = hour.format(calendar.time)
             val dayDate = SimpleDateFormat("d")
             val dayName = dayDate.format(calendar.time)
