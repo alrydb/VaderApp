@@ -9,12 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.alrydb.vderapp.R
-import com.alrydb.vderapp.databinding.ActivityMainBinding
 import com.alrydb.vderapp.databinding.FragmentDailyBinding
-import com.alrydb.vderapp.databinding.FragmentHourlyBinding
 import com.squareup.picasso.Picasso
-import org.w3c.dom.Text
-import java.text.DecimalFormat
 
 
 class FragmentDaily : Fragment() {
@@ -50,7 +46,7 @@ class FragmentDaily : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun showWeatherDetails(dateTime: String, maxTemp: Double, minTemp: Double, description: String, rain : Double, wind : Double, clouds : Double, humidity : Double, icon : String, sunrise : String, sunset :String)
+    fun showWeatherDetails(dateTime: String, maxTemp: Double, minTemp: Double, description: String, rain : Double, wind : Double, clouds : Double, humidity : Double, icon : String, sunrise : String, sunset :String, pop : Double)
     {
         if (activity?.isDestroyed == false && this.isAdded && view != null) {
             fragmentBinding!!.detailsDate.text =  dateTime
@@ -62,7 +58,8 @@ class FragmentDaily : Fragment() {
 
 
 
-            fragmentBinding!!.detailsRain.text = resources.getString(R.string.details_rain) + " " + (rain * 100).toInt().toString() + "%"
+            fragmentBinding!!.detailsDailyPop.text = resources.getString(R.string.details_pop) + " " + (pop * 100).toInt().toString() + "%"
+            fragmentBinding!!.detailsRain.text = resources.getString(R.string.details_rain) + " " + rain + " mm"
             fragmentBinding!!.detailsWind.text = resources.getString(R.string.details_wind) + " " + wind.toInt().toString() + " m/s"
             fragmentBinding!!.detailsClouds.text = resources.getString(R.string.details_clouds) + " " + clouds.toInt().toString() + "%"
             fragmentBinding!!.detailsHumidity.text = resources.getString(R.string.details_humidity) + " " + humidity.toInt().toString() + "%"

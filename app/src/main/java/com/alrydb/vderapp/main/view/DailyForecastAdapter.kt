@@ -150,7 +150,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
 
 
             fragmentDaily.showWeatherDetails( dayName + " " + monthName , forecast.temp.max,
-                forecast.temp.min, forecast.weather[0].description, forecast.rain, forecast.windSpeed, forecast.clouds.toDouble(), forecast.humidity.toDouble(), forecast.weather[0].icon, sunriseTime, sunsetTime
+                forecast.temp.min, forecast.weather[0].description, forecast.rain, forecast.windSpeed, forecast.clouds.toDouble(), forecast.humidity.toDouble(), forecast.weather[0].icon, sunriseTime, sunsetTime, forecast.pop
             )
 
         }

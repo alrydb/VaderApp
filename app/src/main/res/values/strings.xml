@@ -9,7 +9,8 @@
     <string name="temp_min">Min</string>
     <string name="temp_current">Temp</string>
     <string name="temp_feelslike">Känns som</string>
-    <string name="details_rain">Sannolikhet nederbörd</string>
+    <string name="details_pop">Sannolikhet nederbörd</string>
+    <string name="details_rain">Nederbörd</string>
     <string name="details_wind">Vind</string>
     <string name="details_humidity">Luftfuktighet</string>
     <string name="details_clouds">Molnighet</string>

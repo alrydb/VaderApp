@@ -59,11 +59,11 @@
         android:id="@+id/details_rain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="8dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_description"
+        app:layout_constraintTop_toBottomOf="@+id/details_daily_pop"
         tools:text="rain" />
 
     <TextView
@@ -173,6 +173,17 @@
         app:layout_constraintEnd_toStartOf="@+id/details_sunset"
         app:layout_constraintTop_toTopOf="@+id/details_sunset"
         tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/details_daily_pop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_description"
+        tools:text="probability rain" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

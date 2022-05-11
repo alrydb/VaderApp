@@ -138,7 +138,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
 
             fragmentHourly.showWeatherDetails( dayName + " " + monthName + " " + hourName + ": 00" , forecast.temp,
-                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity, forecast.weather[0].icon
+                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity, forecast.weather[0].icon, forecast.pop
             )
 
 
