@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
-// Singleton
+// Denna klass innehåller ett antal konstanter som används som parametrar i varje API-anrop
 
 object Constants{
 
@@ -15,12 +15,8 @@ object Constants{
     const val BASE_URL : String = "https://api.openweathermap.org/"
     // Språk för beskrivning av väder och namn på städer
     const val LANG: String = "se"
-
+    // Måttenhet
     const val METRIC_UNIT : String = "metric"
-
-
-
-
 
 
 }
