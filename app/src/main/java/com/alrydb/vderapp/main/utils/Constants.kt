@@ -18,5 +18,4 @@ object Constants{
     // Måttenhet
     const val METRIC_UNIT : String = "metric"
 
-
 }

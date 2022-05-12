@@ -28,7 +28,6 @@
         android:layout_marginTop="16dp"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:text="Örebro"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="city" />
@@ -40,7 +39,6 @@
         android:layout_marginStart="8dp"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:text="SE"
         app:layout_constraintStart_toEndOf="@+id/city_name"
         app:layout_constraintTop_toTopOf="@+id/city_name"
         tools:text="country" />

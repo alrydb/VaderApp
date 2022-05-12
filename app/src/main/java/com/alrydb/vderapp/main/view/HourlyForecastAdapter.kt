@@ -40,7 +40,6 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
             val calendar: Calendar = Calendar.getInstance()
 
             // 'dt' ger tid för prognosen i "epoch time"
-            Log.i("time", "${hourlyForecast.dt}")
             calendar.setTimeInMillis((hourlyForecast.dt * 1000L))
 
             val tz = TimeZone.getTimeZone(timeZone)
@@ -86,41 +85,22 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
             fragmentManager.beginTransaction().apply {
                 replace(R.id.fragment_hourly, fragmentHourly)
 
-               /* fragment.testFragment(forecast.temp.toString())*/
 
                 val groupCurrentWeather :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.current_group)
                 val groupMenu :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.menu_group)
                 val groupForecast :  androidx.constraintlayout.widget.Group = context.findViewById(R.id.forecast_group)
                 val menu : androidx.appcompat.widget.Toolbar =  context.findViewById(R.id.toolbar_nav)
-                /*val search : androidx.appcompat.widget.SearchView = context.findViewById(R.id.search)*/
-
-                /*val searchView = (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView)*/
-
 
                 groupCurrentWeather.isInvisible = true
                 groupMenu.isInvisible = true
                 groupForecast.isGone = true
                 menu.isInvisible = true
 
-
-
-
-                /*var text : TextView
-                text = fragment.requireView().findViewById(R.id.details_temp)
-                text.text = forecast.temp.toString()*/
                 addToBackStack(null)
                 commit()
 
-
-
             }
 
-        /*    fragment.lifecycleScope.launchWhenCreated {
-
-            }
-
-
-*/
 
             fragmentManager.executePendingTransactions()
 
@@ -138,22 +118,12 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
 
             fragmentHourly.showWeatherDetails( dayName + " " + monthName + " " + hourName + ": 00" , forecast.temp,
-                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds, forecast.humidity, forecast.weather[0].icon, forecast.pop
+                 forecast.feelsLike, forecast.weather[0].description, forecast.rain?.rain ?: 0.0, forecast.windSpeed, forecast.clouds,
+                forecast.humidity, forecast.weather[0].icon, forecast.pop
             )
 
 
-
-
-
-
-
-
-
-
-
-
         }
-
 
 
     }

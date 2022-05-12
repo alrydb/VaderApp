@@ -11,10 +11,10 @@ import retrofit2.http.Query
 
 interface WeatherService {
 
-// https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=572c5e9a56daaad8dd3502bf88c4b5c7
-
-    // Ett http GET request med tillagda parametrar
+    // http GET request med tillagda parametrar
     // Exempel på hur url:en kommer se ut https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&units=metric&appid=572c5e9a56daaad8dd3502bf88c4b5c7&lang=se
+
+    // Nuvarande väder
     @GET("data/2.5/weather")
        fun getWeather(
         @Query("lat") lat : Double,
@@ -24,7 +24,7 @@ interface WeatherService {
         @Query("lang") lang : String?,
     ) : Call<WeatherResponse> // Returnerar ett gson  objekt då det är den "converter" vi angett i vår Retrofitbuilder
 
-
+    // 7 dagars prognos
     @GET("data/2.5/onecall")
     fun getForecast(
         @Query("lat") lat : Double,
@@ -36,7 +36,7 @@ interface WeatherService {
 
     ) : Call<DailyForecastResponse>
 
-
+    // 24 timmars prognos
     @GET("data/2.5/onecall")
     fun getHourlyForecast(
         @Query("lat") lat : Double,
@@ -49,6 +49,7 @@ interface WeatherService {
         ) : Call<HourlyForecastResponse>
 
 
+    // Plats
     @GET("geo/1.0/direct")
     fun getSearchedLocation(
         @Query("q") q : String?,

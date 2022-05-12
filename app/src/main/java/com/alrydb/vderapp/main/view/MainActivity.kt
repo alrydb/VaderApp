@@ -49,22 +49,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherInfoViewModel
     private lateinit var binding : ActivityMainBinding
-    private lateinit var adapterList : MutableList<Any>
+
     private lateinit var searchView: androidx.appcompat.widget.SearchView
     var swipeRefreshLayout: SwipeRefreshLayout? = null
-
-    private var twentyFourHoursSelected : Boolean = true
-    private var sevenDaysSelected: Boolean = false
-
     private var showHourlyAdapter : Boolean = true
 
 
-
-    var menuHidden : Boolean = false // setting state
-
-
-    lateinit var adapter : DailyForecastAdapter
-
+    var menuHidden : Boolean = false
 
 
     // Skapa menyn
@@ -121,35 +112,27 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+        // Kod som hanterar vad som händer när man söker på en stad/ort
         searchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.i("search",query ?: "tom" )
+
                 if (networkEnabled()) {
                     viewModel.getSearchedLocationDetails(query, this@MainActivity)
                 }
 
-
                 (menu.findItem(R.id.search)).collapseActionView()
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
-                /*twentyFourHoursSelected = true*/
-               /* sevenDaysSelected = false*/
+
                 showHourlyForecast()
-
-
-
-
-
                 removeFragment()
 
                 return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                Log.i("search",query ?: "tom" )
                 return true
             }
-
 
         }
         )
@@ -157,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    // Kod som körs när appen startas, och när Mainactivity startas om
     override fun onCreate(savedInstanceState: Bundle?) {
         //Tvinga appen att köras med ljust tema även om mörkt tema är aktiverat
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -171,28 +155,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarNav)
         binding.toolbarNav.inflateMenu(R.menu.options_menu)
+
         swipeRefreshLayout = binding.refreshLayout
+
+        // Sätter default vald tab till 24 timmars prognos
         binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
 
 
-
-
-        //skapa viewmodel
+        //Skapa viewmodel
         val viewModelFactory = ViewModelFactory(
             dailyForecastRepository = DailyForecastRepository(),
             weatherRepository = WeatherRepository(),
             hourlyForecastRepository = HourlyForecastRepository(),
             locationRepository = LocationRepository()
-
         )
-
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
 
 
         // Bottom navigation
         binding.bottomNav.setOnItemSelectedListener{
-
-            Log.i("bottomnav" , it.itemId.toString())
 
             when (it.title){
 
@@ -214,11 +195,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-        //val weatherRepository = WeatherRepository()
-        //val dailyForecastRepository = DailyForecastRepository()
-
-
         // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
         if (networkEnabled() && locationEnabled()) {
             refreshContent()
@@ -232,7 +208,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.refreshDailyForecast()
             showCurrentWeather()
             showHourlyForecast()
-            Log.i("launch" ,"visa örebro vid launch")
 
         }
 
@@ -241,12 +216,9 @@ class MainActivity : AppCompatActivity() {
 
         swipeRefreshLayout!!.setOnRefreshListener() {
 
-            /*Log.i("perms", locationEnabled().toString())*/
-
             removeFragment()
 
             if (networkEnabled() && locationEnabled()) {
-
 
                 refreshContent()
 
@@ -254,7 +226,6 @@ class MainActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Plats är inte aktiverad, kan inte hämta väderdata för aktuell plats", Toast.LENGTH_SHORT).show()
                 swipeRefreshLayout!!.isRefreshing = false
-
 
 
             } else if (!networkEnabled()) {
@@ -271,9 +242,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-
+            // Kod som hanterar vad som ska visas under vilken tabb
             binding.forecastTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     when (tab) {
@@ -281,23 +250,15 @@ class MainActivity : AppCompatActivity() {
                             showHourlyAdapter = true
                             showHourlyForecast()
 
-                           /* refreshContent()*/
                             Log.i("tab", "tab 1 selected")
-                            /*twentyFourHoursSelected = true*/
-
-
 
                         }
                         binding.forecastTab.getTabAt(1) -> {
-                            /*viewModel.refreshDailyForecast()*/
                             showHourlyAdapter = false
                             showDailyForecast()
 
-                            /*refreshContent()*/
                             Log.i("tab", "tab 2 selected")
 
-
-                            /*sevenDaysSelected = true*/
 
                         }
                     }
@@ -309,15 +270,11 @@ class MainActivity : AppCompatActivity() {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
                             Log.i("tab", "tab 1 unselected")
-                            /*twentyFourHoursSelected = false*/
-
 
                         }
 
                         binding.forecastTab.getTabAt(1) -> {
                             Log.i("tab", "tab 2 unselected")
-
-                            /*sevenDaysSelected = false*/
 
                         }
 
@@ -329,13 +286,12 @@ class MainActivity : AppCompatActivity() {
                     when (tab) {
                         binding.forecastTab.getTabAt(0) -> {
                             Log.i("tab", "tab 1 reselected")
-                            /*twentyFourHoursSelected = true*/
 
                         }
 
                         binding.forecastTab.getTabAt(1) -> {
                             Log.i("tab", "tab 2 reselected")
-                           /* sevenDaysSelected = true*/
+
                         }
 
                     }
@@ -345,54 +301,21 @@ class MainActivity : AppCompatActivity() {
 
             })
 
-
-
-
-
-
-
     }
 
-   /* override fun onResume() {
 
 
-      if (networkEnabled() && locationEnabled()) {
-           refreshContent()
-           Log.i("perms" ,"granted ONRESUME")
-
-
-        }
-
-        super.onResume()
-
-    }*/
-
-    /*override fun onRestart() {
-
-        if (networkEnabled() && locationEnabled()) {
-            refreshContent()
-            Log.i("perms" ,"granted ONRESUME")
-
-
-        }
-
-        super.onRestart()
-    }
-*/
-
-
-
+    // Lägger till extra funkationalitet till tillbakaknappen genom att overridea funktionen
     override fun onBackPressed() {
-        //Städa
-        /*val groupCurrentWeather :  androidx.constraintlayout.widget.Group = findViewById(R.id.current_group)
-        val groupMenu :  androidx.constraintlayout.widget.Group = findViewById(R.id.menu_group)
-        val groupForecast :  androidx.constraintlayout.widget.Group = findViewById(R.id.forecast_group)*/
+
         binding.currentGroup.isInvisible = false
         binding.menuGroup.isInvisible = false
         binding.forecastGroup.isInvisible = false
         binding.toolbarNav.isVisible = true
+
         super.onBackPressed()
     }
+
 
    private fun removeFragment()
     {
@@ -411,24 +334,23 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    // Funktion som anropas när användaren refreshar appen
     private fun refreshContent()
     {
-
-
 
         var tab = binding.forecastTab.selectedTabPosition
 
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
         Log.i("help",tab.toString())
-        if (/*twentyFourHoursSelected*/ tab == 0)
+        if (tab == 0)
         {
 
             viewModel.refreshHourlyForecast()
             showHourlyForecast()
 
         }
-        else if (/*sevenDaysSelected*/ tab == 1)
+        else if (tab == 1)
         {
 
             viewModel.refreshDailyForecast()
@@ -444,7 +366,6 @@ class MainActivity : AppCompatActivity() {
     private fun networkEnabled() : Boolean
     {
         var networkEnabled = false
-
 
         if (NetworkController.isNetWorkAvailable(this))
         {
@@ -489,19 +410,12 @@ class MainActivity : AppCompatActivity() {
                         // Om behörigheter tillåts av användaren
                         if (report!!.areAllPermissionsGranted()){
 
-
-
-
                             viewModel.requestLocationData(this@MainActivity)
                             locationEnabled = true
 
 
 
                             Log.i("perms", "granted")
-                            /*showCurrentWeather()
-                            showHourlyForecast()*/
-
-                          /* refreshContent()*/
 
                         }
                         // Om behörigheter nekas av användaren
@@ -539,10 +453,6 @@ class MainActivity : AppCompatActivity() {
 
                     intent.data = uri
 
-
-
-                    Log.i("perms", packageName)
-
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
@@ -552,20 +462,6 @@ class MainActivity : AppCompatActivity() {
                     System.exit(1)
 
 
-
-                  /*  val i = Intent(this@MainActivity, MainActivity::class.java)
-                    i.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)*/
-
-                    /*Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                        val i = Intent(this@MainActivity, MainActivity::class.java)
-                        i.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(i)
-                        viewModel.requestLocationData(this@MainActivity)
-                        refreshContent()
-
-
-                    }, 5000)*/
                 }
                 catch(e: ActivityNotFoundException){
                     e.printStackTrace()
@@ -578,6 +474,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // Uppdatera UI gällande nuvarande väder
     private fun showCurrentWeather()
     {
         // Observera viewmodel
@@ -625,10 +522,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    // Uppdatera UI gällande listan med dygnsprognoser
     private fun showDailyForecast()
     {
         binding.forecastRv.adapter = null
-        // Visa 7 dagars-prognos för nuvarande plats
 
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
                 binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -660,10 +557,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    // Uppdatera UI gällande listan med timme för timme prognoser
     private fun showHourlyForecast()
     {
-       /* binding.forecastRv.adapter = null*/
-        // Visa 7 dagars-prognos för nuvarande plats
+
         viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
@@ -673,7 +570,7 @@ class MainActivity : AppCompatActivity() {
             for(i in hourlyForecastResponse.hourly)
             {
                 adapterlist.add(i)
-                // Api-svaret ger data för 48 timamr, vi vill endast visa 24 timmar
+                // Api-svaret ger data för 48 timmar, vi vill endast visa 24 timmar
                 if (i == hourlyForecastResponse.hourly[23])
                 {
                     break
@@ -687,14 +584,11 @@ class MainActivity : AppCompatActivity() {
                 binding?.forecastRv?.adapter = HourlyForecastAdapter(adapterlist, this@MainActivity, timeZone )
             }
 
-
-
         })
 
         if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
-
 
         }
 
@@ -702,17 +596,6 @@ class MainActivity : AppCompatActivity() {
         Log.i("SHOW", binding.forecastRv.adapter.toString())
 
     }
-
-   /* private fun setHourlyAdapter() {
-        binding?.forecastRv?.adapter = HourlyForecastAdapter(hourlyAdapterList, this@MainActivity)
-
-    }
-
-    private fun setDailyAdapter() {
-        binding?.forecastRv?.adapter = DailyForecastAdapter(dailyAdapterList)
-
-    }*/
-
 
 
 

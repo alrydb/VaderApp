@@ -36,7 +36,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     private var mfusedLocationClient: FusedLocationProviderClient? = null
     private var mLocationRequest : LocationRequest? = null
-   /* private var mLocationCallback : LocationCallback? = null*/
 
 
     // Sätter latitud och longitud till att vara Örebro som standard
@@ -54,7 +53,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
 
     fun isLocationEnabled(context: Context): Boolean {
 
-
         // Få tillgång till användarens plats
         val locationManager: LocationManager
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -66,10 +64,9 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    // Process som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
+    // Kod som hämtar mobilens plats var n:e millisekund (n avgörs av värdet på interval)
     @SuppressLint("MissingPermission")
     fun requestLocationData(context: Context) {
-
 
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
@@ -109,8 +106,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // Funktion som anropas när användaren söker på en plats
     fun refreshSearchedLocation() {
 
+            // Sätter värdet på longitud och latitiud till den sökta platsens latitiud och longitud
             lat = locationResponse[0].lat
             lon = locationResponse[0].lon
 
@@ -122,6 +121,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // Funktion som pausar uppdatering av mobilens aktuella plats
     private fun stopLocationUpdates() {
         mfusedLocationClient?.removeLocationUpdates(mLocationCallback)
 
@@ -150,7 +150,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationWeatherDetails()
             getLocationForecastDetails()
             getLocationHourlyForecastDetails()
-            //getSearchedLocationDetails()
 
         }
 

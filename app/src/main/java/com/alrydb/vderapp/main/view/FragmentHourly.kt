@@ -34,9 +34,6 @@ class FragmentHourly : Fragment() {
         val binding = FragmentHourlyBinding.bind(view)
         fragmentBinding = binding
 
-        fragmentBinding!!.detailsTemp.text = "hello world"
-
-
         fragmentBinding!!.detailsClear.setOnClickListener(){
             activity!!.onBackPressed()
         }
@@ -45,18 +42,17 @@ class FragmentHourly : Fragment() {
 
     }
 
+    // Funktion som ser till att väderdata för den valda prognosen är den som presenteras
     @SuppressLint("SetTextI18n")
     fun showWeatherDetails(dateTime: String, temp: Double, feelsLike: Double, description: String, rain : Double, wind : Double, clouds : Double, humidity : Double, icon : String, pop : Double)
     {
-        if (activity?.isDestroyed == false && this.isAdded && view != null) {
+
             fragmentBinding!!.detailsDate.text =  dateTime
             fragmentBinding!!.detailsTemp.text =   " " + temp.toString().substringBefore(".") + "°C"
             fragmentBinding!!.detailsFeelsLike.text = resources.getString(R.string.temp_feelslike) + " " + feelsLike.toString().substringBefore(".") + "°C"
             fragmentBinding!!.detailsDescription.text = description.replaceFirstChar {
                 description[0].uppercase()
             }
-
-
 
             fragmentBinding!!.detailsPop.text = resources.getString(R.string.details_pop) + " " + (pop * 100).toInt().toString() + "%"
             fragmentBinding!!.detailsRain.text = resources.getString(R.string.details_rain) + " " + rain.toString() + " mm"
@@ -70,17 +66,8 @@ class FragmentHourly : Fragment() {
             val uri = "https://openweathermap.org/img/w/" + icon + ".png"
             Picasso.get().load(uri).into(fragmentBinding!!.detailsIcon)
 
-
-
-
-            Log.i("fragment", "it worked")
         }
-        else
-        {
-            Log.i("fragment", "did not worjk")
-            /*fragmentBinding!!.detailsTemp.text = temp*/
-        }
-    }
+
 
     override fun onDestroyView() {
         fragmentBinding = null
