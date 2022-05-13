@@ -66,12 +66,10 @@ class MainActivity : AppCompatActivity() {
         // Konfigurera sök https://developer.android.com/guide/topics/search/search-dialog#UsingSearchWidget
         searchView = (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView)
 
-        // Get the SearchView and set the searchable configuration
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView.apply {
-            // Assumes current activity is the searchable activity
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
+            setIconifiedByDefault(false)
         }
 
         if (menuHidden) {
@@ -103,10 +101,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.forecastGroup.isVisible = false
                 binding.currentGroup.isVisible = false
-
-
-
-
 
             }
         })
@@ -330,10 +324,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-
-
     // Funktion som anropas när användaren refreshar appen
     private fun refreshContent()
     {
@@ -342,7 +332,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
-        Log.i("help",tab.toString())
+
         if (tab == 0)
         {
 
@@ -355,7 +345,6 @@ class MainActivity : AppCompatActivity() {
 
             viewModel.refreshDailyForecast()
             showDailyForecast()
-
 
         }
 
@@ -413,10 +402,6 @@ class MainActivity : AppCompatActivity() {
                             viewModel.requestLocationData(this@MainActivity)
                             locationEnabled = true
 
-
-
-                            Log.i("perms", "granted")
-
                         }
                         // Om behörigheter nekas av användaren
                         if (report.isAnyPermissionPermanentlyDenied){
@@ -467,9 +452,15 @@ class MainActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-            .setNegativeButton("Avbryt"){
+            .setNegativeButton("AVBRYT"){
                 dialog, _ ->
                 dialog.dismiss()
+
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+
+
             }.show()
     }
 

@@ -173,6 +173,9 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // Nedan finnar man funktioner som hanterar de olika API-anropen och lagrar den hämtade data i listor som vår view kan observera
+
+    // Nuvarande väder API-anrop
     private fun getLocationWeatherDetails() {
 
         finishRefresh = false
@@ -229,6 +232,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // 7 dagars prognos API-anrop
    private fun getLocationForecastDetails() {
 
 
@@ -262,6 +266,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // 24 timmar API-anrop
     private fun getLocationHourlyForecastDetails() {
 
 
@@ -296,10 +301,10 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
+    // Säkt plats API-anrop
      fun getSearchedLocationDetails(location : String?, context: Context) {
 
-
-        val response = locationRepository.getSearchedLocation(location ?: "London")
+        val response = locationRepository.getSearchedLocation(location ?: "Örebro")
         response.enqueue(object : Callback<LocationResponse> {
             override fun onResponse(
                 call: Call<LocationResponse>,
@@ -312,12 +317,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                         if (locationList.size > 0) {
                             locationResponse = locationList
 
-                            /* Log.i("search", "${locationList?.get(0)?.name}")*/
-
-
-
                             refreshSearchedLocation()
-
 
                         } else {
                             Toast.makeText(context, "Kunde inte hitta den sökta platsen", Toast.LENGTH_SHORT).show()
