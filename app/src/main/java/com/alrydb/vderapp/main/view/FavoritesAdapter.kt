@@ -32,7 +32,10 @@ class FavoritesAdapter(val favorites : ArrayList<String>, val context: Context) 
         // Vad varje rad i recyclerviewen ska innehålla
         fun bindItem(favorite: String)
         {
+
             itemBinding.tvFavorite.text = favorite
+
+
         }
     }
 

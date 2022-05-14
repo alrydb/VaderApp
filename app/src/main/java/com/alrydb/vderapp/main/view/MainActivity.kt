@@ -322,8 +322,16 @@ class MainActivity : AppCompatActivity() {
 
                 if (!favorites.contains(binding.cityName.text))
                 {
+                    var favorite = binding.cityName.text
+
+                    // Tar bort 'kommun' från vissa resultat
+                    if (favorite.contains("Municipality"))
+                    {
+                        favorite = favorite.toString().substringBefore("Municipality")
+                    }
+
                     // Lägg till ny favorit
-                    favorites.add(binding.cityName.text.toString())
+                    favorites.add(favorite.toString())
                     // Uppdatera och spara favoriter
                     tinyDB.putListString("favorites", favorites)
                     binding.buttonFavorites.setImageResource(R.drawable.ic_favorite)
@@ -361,8 +369,8 @@ class MainActivity : AppCompatActivity() {
                viewModel.getSearchedLocationDetails(location, this)
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
 
-               showHourlyForecast()
-               removeFragment()
+               /*showHourlyForecast()
+               removeFragment()*/
        }
 
        super.onResume()
@@ -388,7 +396,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkIfFavorited(result : String)
     {
-        if(tinyDB.getListString("favorites").contains(result))
+
+        if(tinyDB.getListString("favorites").contains(result.substringBefore("Municipality")))
         {
             binding.buttonFavorites.setImageResource(R.drawable.ic_favorite)
         }
