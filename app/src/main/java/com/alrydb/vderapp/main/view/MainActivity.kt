@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -42,6 +43,7 @@ import android.view.View.OnAttachStateChangeListener
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.alrydb.vderapp.main.data.TinyDB
 import com.alrydb.vderapp.main.data.repo.LocationRepository
 
 
@@ -53,6 +55,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchView: androidx.appcompat.widget.SearchView
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     private var showHourlyAdapter : Boolean = true
+
+    private lateinit var favorites : SharedPreferences
+    private lateinit var tinyDB : TinyDB
+
+
 
 
     var menuHidden : Boolean = false
@@ -85,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                 // Searchview stängs
                 binding.cityName.setVisibility(View.VISIBLE)
                 binding.countryName.setVisibility(View.VISIBLE)
-                binding.imageView.setVisibility(View.VISIBLE)
+                binding.buttonFavorites.setVisibility(View.VISIBLE)
 
                 binding.forecastGroup.isVisible = true
                 binding.currentGroup.isVisible = true
@@ -97,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 // Searchview öppnas
                 binding.cityName.setVisibility(View.INVISIBLE)
                 binding.countryName.setVisibility(View.INVISIBLE)
-                binding.imageView.setVisibility(View.INVISIBLE)
+                binding.buttonFavorites.setVisibility(View.INVISIBLE)
 
                 binding.forecastGroup.isVisible = false
                 binding.currentGroup.isVisible = false
@@ -117,6 +124,7 @@ class MainActivity : AppCompatActivity() {
 
                 (menu.findItem(R.id.search)).collapseActionView()
                 binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
+
 
                 showHourlyForecast()
                 removeFragment()
@@ -144,6 +152,10 @@ class MainActivity : AppCompatActivity() {
         // Få referenser till alla ui-komponenter med hjälp av viewbinding
         binding = ActivityMainBinding.inflate(layoutInflater)
 
+        // Favorites
+        tinyDB = TinyDB(applicationContext)
+        favorites = getSharedPreferences("favorites", Context.MODE_PRIVATE)
+
 
         //Rendera UI-element
         setContentView(binding.root)
@@ -164,6 +176,8 @@ class MainActivity : AppCompatActivity() {
             locationRepository = LocationRepository()
         )
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
+
+
 
 
         // Bottom navigation
@@ -295,7 +309,68 @@ class MainActivity : AppCompatActivity() {
 
             })
 
+
+
+        // Favoriter
+
+        binding.buttonFavorites.setOnClickListener(){
+
+            if (binding.cityName.text.isNotEmpty()) {
+
+                // Hämta favoriter
+                var favorites = tinyDB.getListString("favorites")
+
+                if (!favorites.contains(binding.cityName.text))
+                {
+                    // Lägg till ny favorit
+                    favorites.add(binding.cityName.text.toString())
+                    // Uppdatera och spara favoriter
+                    tinyDB.putListString("favorites", favorites)
+                    binding.buttonFavorites.setImageResource(R.drawable.ic_favorite)
+                    Toast.makeText(this, "Sparad som favorit!", Toast.LENGTH_SHORT).show()
+                }
+                else
+                {
+                    Toast.makeText(this, "Denna plats är redan sparad som favorit", Toast.LENGTH_SHORT).show()
+                }
+
+
+
+
+                /*tinyDB.putString("favorites", binding.cityName.text.toString())*/
+
+            }
+
+
+        }
+
+
+
+
+
+
     }
+
+
+   override fun onResume() {
+
+
+       if (intent.extras?.get("runFunction").toString().toBoolean())
+       {
+               val location = intent.extras?.get("selectedFavorite").toString()
+               viewModel.getSearchedLocationDetails(location, this)
+                binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
+
+               showHourlyForecast()
+               removeFragment()
+       }
+
+       super.onResume()
+
+
+    }
+
+
 
 
 
@@ -308,6 +383,19 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarNav.isVisible = true
 
         super.onBackPressed()
+    }
+
+
+    private fun checkIfFavorited(result : String)
+    {
+        if(tinyDB.getListString("favorites").contains(result))
+        {
+            binding.buttonFavorites.setImageResource(R.drawable.ic_favorite)
+        }
+        else
+        {
+            binding.buttonFavorites.setImageResource(R.drawable.ic_favorite_border)
+        }
     }
 
 
@@ -476,17 +564,21 @@ class MainActivity : AppCompatActivity() {
             Log.i("response", weatherResponse.weather[0].icon)
 
 
+            checkIfFavorited(weatherResponse.name)
             // Visa väderdata för nuvarande plats och tid
 
-            // Tar bort 'kommun' från vissa resultat
+           /* // Tar bort 'kommun' från vissa resultat
             if (weatherResponse.name.contains("Municipality"))
             {
                 binding.cityName.text = weatherResponse.name.substringBefore("Municipality")
             }
             else
-            {
+            {*/
                 binding.cityName.text = weatherResponse.name
-            }
+           /* }*/
+
+
+
 
             binding.countryName.text = weatherResponse.sys.country
             binding.currentWind.text = weatherResponse.wind.speed.toInt().toString() + " m/s"
@@ -552,7 +644,7 @@ class MainActivity : AppCompatActivity() {
     private fun showHourlyForecast()
     {
 
-        viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
+            viewModel.hourlyForecastList.observe(this, Observer { hourlyForecastResponse ->
             binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
             var adapterlist : MutableList<HourlyForecast> = mutableListOf()
@@ -587,6 +679,8 @@ class MainActivity : AppCompatActivity() {
         Log.i("SHOW", binding.forecastRv.adapter.toString())
 
     }
+
+
 
 
 

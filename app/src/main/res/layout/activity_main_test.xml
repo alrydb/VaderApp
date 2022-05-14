@@ -27,7 +27,7 @@
         android:layout_marginTop="16dp"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/button_favorites"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="city" />
 
@@ -44,7 +44,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/button_favorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

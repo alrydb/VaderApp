@@ -10,7 +10,7 @@ import android.os.Build
 object Constants{
 
     // API-NYCKEL
-    const val APP_ID : String = "a62fb47f91aa25fcf51d05cf37e560f7"
+    const val APP_ID : String = "572c5e9a56daaad8dd3502bf88c4b5c7"
     // API URL
     const val BASE_URL : String = "https://api.openweathermap.org/"
     // Språk för beskrivning av väder och namn på städer
