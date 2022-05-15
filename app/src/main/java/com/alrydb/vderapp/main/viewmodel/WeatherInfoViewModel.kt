@@ -71,8 +71,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         mLocationRequest = create().apply {
-            interval = 120000
-            fastestInterval = 60000
+            interval = 300000
+            fastestInterval = 150000
 
             priority = PRIORITY_HIGH_ACCURACY
         }
@@ -109,6 +109,8 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     // Funktion som anropas när användaren söker på en plats
     fun refreshSearchedLocation() {
 
+            stopLocationUpdates()
+
             // Sätter värdet på longitud och latitiud till den sökta platsens latitiud och longitud
             lat = locationResponse[0].lat
             lon = locationResponse[0].lon
@@ -117,7 +119,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
             getLocationForecastDetails()
             getLocationHourlyForecastDetails()
 
-            stopLocationUpdates()
+
     }
 
 
@@ -301,7 +303,7 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-    // Säkt plats API-anrop
+    // Sökt plats API-anrop
      fun getSearchedLocationDetails(location : String?, context: Context) {
 
         val response = locationRepository.getSearchedLocation(location ?: "Örebro")

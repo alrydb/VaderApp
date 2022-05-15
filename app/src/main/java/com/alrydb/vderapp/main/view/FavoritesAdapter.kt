@@ -70,7 +70,7 @@ class FavoritesAdapter(val favorites : ArrayList<String>, val context: Context) 
             extras.putBoolean("runFunction", true)
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtras(extras)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+           /* intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)*/
             context.startActivity(intent)
 
 

@@ -23,14 +23,7 @@ class FavoritesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-
-        var db = applicationContext.getSharedPreferences("favorites", Context.MODE_PRIVATE)
-
-        var tinyDB : TinyDB = TinyDB(applicationContext)
-
-        /*Log.i("favorties", db.getString("favorites", "")!!)*/
-
-       /* Log.i("favorites" , tinyDB.getListString("favorites")[1])*/
+        var tinyDB = TinyDB(applicationContext)
 
         var adapterList = tinyDB.getListString("favorites")
 

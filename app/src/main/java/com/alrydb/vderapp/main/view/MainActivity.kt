@@ -147,7 +147,12 @@ class MainActivity : AppCompatActivity() {
         //Tvinga appen att köras med ljust tema även om mörkt tema är aktiverat
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+
+
+
         super.onCreate(savedInstanceState)
+
+
 
         // Få referenser till alla ui-komponenter med hjälp av viewbinding
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -320,20 +325,18 @@ class MainActivity : AppCompatActivity() {
                 // Hämta favoriter
                 var favorites = tinyDB.getListString("favorites")
 
+
                 if (!favorites.contains(binding.cityName.text))
                 {
-                    var favorite = binding.cityName.text
-
-                    // Tar bort 'kommun' från vissa resultat
-                    if (favorite.contains("Municipality"))
-                    {
-                        favorite = favorite.toString().substringBefore("Municipality")
-                    }
+                    val favorite = binding.cityName.text
 
                     // Lägg till ny favorit
-                    favorites.add(favorite.toString())
+                    // Tar bort 'kommun' från vissa resultat
+                    favorites.add(favorite.toString().substringBefore("Municipality"))
+
                     // Uppdatera och spara favoriter
                     tinyDB.putListString("favorites", favorites)
+
                     binding.buttonFavorites.setImageResource(R.drawable.ic_favorite)
                     Toast.makeText(this, "Sparad som favorit!", Toast.LENGTH_SHORT).show()
                 }
@@ -342,15 +345,23 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Denna plats är redan sparad som favorit", Toast.LENGTH_SHORT).show()
                 }
 
-
-
-
-                /*tinyDB.putString("favorites", binding.cityName.text.toString())*/
-
             }
 
 
         }
+
+        if (intent.extras?.get("runFunction").toString().toBoolean())
+        {
+            val location = intent.extras?.get("selectedFavorite").toString()
+
+            viewModel.getSearchedLocationDetails(location, this@MainActivity)
+
+            /*binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))*/
+
+            /*showHourlyForecast()
+            removeFragment()*/
+        }
+
 
 
 
@@ -360,20 +371,18 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onStart() {
+        super.onStart()
+        Log.i("start", "started")
+    }
+
    override fun onResume() {
 
 
-       if (intent.extras?.get("runFunction").toString().toBoolean())
-       {
-               val location = intent.extras?.get("selectedFavorite").toString()
-               viewModel.getSearchedLocationDetails(location, this)
-                binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
-
-               /*showHourlyForecast()
-               removeFragment()*/
-       }
-
        super.onResume()
+
+
+
 
 
     }

@@ -22,6 +22,7 @@
         <activity
             android:name=".main.view.SettingsActivity"
             android:exported="false"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".main.view.MainActivity"
