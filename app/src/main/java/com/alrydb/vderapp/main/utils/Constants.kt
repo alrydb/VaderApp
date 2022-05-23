@@ -15,7 +15,7 @@ object Constants{
     const val BASE_URL : String = "https://api.openweathermap.org/"
     // Språk för beskrivning av väder och namn på städer
     const val LANG: String = "se"
-    // Måttenhet
+
     const val METRIC_UNIT : String = "metric"
 
 }

@@ -62,7 +62,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val forecast = dailyForecastResponse.daily[position]
-        // Tilldelar varje rad i recyclerviewen rätt innehåll
+
         holder.bindItem(forecast)
 
         // Varannan rad får ljusgrå bakgrund istället för vit
@@ -82,7 +82,7 @@ class DailyForecastAdapter(val dailyForecastResponse : DailyForecastResponse, va
             )
         }
 
-        // Kod som styr vad som händer när man klickar på en prognos
+
         holder.itemView.setOnClickListener() {
 
             fragmentDaily = FragmentDaily()

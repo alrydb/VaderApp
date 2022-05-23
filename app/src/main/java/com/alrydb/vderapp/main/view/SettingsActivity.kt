@@ -23,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
 
-        // Bottom navigation
+
         binding.bottomNav.setOnItemSelectedListener{
 
             Log.i("bottomnav" , it.itemId.toString())

@@ -11,7 +11,7 @@ class HourlyForecastRepository {
 
     fun getHourlyForecast(lat : Double, lon : Double): Call<HourlyForecastResponse> {
 
-        Log.i("response", "HOURLY CALLED FROM REPO")
+
         return RetrofitInstance.weatherApi.getHourlyForecast(lat, lon,"current,daily,minutely,alerts", Constants.METRIC_UNIT, Constants.APP_ID, Constants.LANG)
 
     }

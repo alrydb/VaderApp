@@ -32,7 +32,7 @@ class FavoritesActivity : AppCompatActivity() {
         binding.favoritesRv.adapter = FavoritesAdapter(adapterList, this)
 
 
-        // Bottom navigation
+
         binding.bottomNav.setOnItemSelectedListener{
 
             Log.i("bottomnav" , it.itemId.toString())

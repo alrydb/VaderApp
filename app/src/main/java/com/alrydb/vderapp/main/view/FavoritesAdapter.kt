@@ -29,7 +29,7 @@ class FavoritesAdapter(val favorites : ArrayList<String>, val context: Context) 
     inner class MainViewHolder(val itemBinding: FavoritesItemBinding)
         : RecyclerView.ViewHolder(itemBinding.root){
 
-        // Vad varje rad i recyclerviewen ska innehålla
+
         fun bindItem(favorite: String)
         {
 
@@ -45,7 +45,7 @@ class FavoritesAdapter(val favorites : ArrayList<String>, val context: Context) 
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val favorite = favorites[position]
-        // Tilldelar varje rad i recyclerviewen rätt innehåll
+
         holder.bindItem(favorite)
 
         // Varannan rad får ljusgrå bakgrund istället för vit
@@ -62,15 +62,15 @@ class FavoritesAdapter(val favorites : ArrayList<String>, val context: Context) 
 
 
 
-        // Hanterar klickevent
+
         holder.itemView.setOnClickListener(){
 
             val extras = Bundle()
             extras.putString("selectedFavorite", favorite)
-            extras.putBoolean("runFunction", true)
+            extras.putBoolean("goToFavorite", true)
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtras(extras)
-           /* intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)*/
+
             context.startActivity(intent)
 
 

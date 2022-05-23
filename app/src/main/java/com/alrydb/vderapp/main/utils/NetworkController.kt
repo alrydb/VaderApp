@@ -14,14 +14,14 @@ object NetworkController {
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            // Returnera false om vi inte kan koppla upp oss till internet
+
             val network = connectivityManager.activeNetwork ?: return false
 
             val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
 
             // 'when' fungerar som en switch i andra språk
             return when {
-                //Returnera true om vi får internetuppkoppling genom, wifi, mobilnät eller ethernet
+
                 activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                 activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true

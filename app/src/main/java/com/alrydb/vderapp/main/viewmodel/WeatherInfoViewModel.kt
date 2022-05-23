@@ -133,11 +133,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
     }
 
 
-
-
-
-
-
     private var mLocationCallback = object : LocationCallback() {
 
         override fun onLocationResult(locationresult: LocationResult) {
@@ -192,8 +187,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                 response: Response<WeatherResponse>
             ) {
 
-
-
                 if (response!!.isSuccessful) {
 
                     // All data från vårt gson objekt, dvs vår deserialiserade json data
@@ -206,19 +199,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                     finishRefresh = true
 
 
-                } else {
-                    val rc = response.code()
-                    when (rc) {
-                        400 -> {
-                            Log.e("Error 400", "bad connection")
-                        }
-                        404 -> {
-                            Log.e("Error 404", "not found")
-                        }
-                        else -> {
-                            Log.e("Error", "Generic error")
-                        }
-                    }
                 }
             }
 
@@ -326,20 +306,6 @@ class WeatherInfoViewModel(private val weatherRepository: WeatherRepository, pri
                         }
                     }
 
-
-                } else {
-                    val rc = response.code()
-                    when (rc) {
-                        400 -> {
-                            Log.e("Error 400", "bad connection")
-                        }
-                        404 -> {
-                            Log.e("Error 404", "not found")
-                        }
-                        else -> {
-                            Log.e("Error", "Generic error")
-                        }
-                    }
                 }
 
             }

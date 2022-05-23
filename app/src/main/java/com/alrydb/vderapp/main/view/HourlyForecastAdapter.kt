@@ -59,7 +59,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val forecast = hourlyForecastResponse[position]
-        // Tilldelar varje rad i recyclerviewen rätt innehåll
+
         holder.bindItem(forecast)
 
         // Varannan rad får ljusgrå bakgrund istället för vit
@@ -74,7 +74,7 @@ class HourlyForecastAdapter(val hourlyForecastResponse : List<HourlyForecast>, v
             holder.itemBinding.root.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
         }
 
-        // Hanterar klickevent för varje prognos
+
         holder.itemView.setOnClickListener(){
 
 

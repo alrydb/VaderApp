@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     var menuHidden : Boolean = false
 
 
-    // Skapa menyn
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
 
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // Kod som hanterar vad som händer när sökvyn öppnas och stängs
+
         searchView.addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
             override fun onViewDetachedFromWindow(arg0: View) {
                 // Searchview stängs
@@ -142,22 +142,19 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    // Kod som körs när appen startas, och när Mainactivity startas om
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         //Tvinga appen att köras med ljust tema även om mörkt tema är aktiverat
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-
-
-
         super.onCreate(savedInstanceState)
-
 
 
         // Få referenser till alla ui-komponenter med hjälp av viewbinding
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        // Favorites
+
         tinyDB = TinyDB(applicationContext)
         favorites = getSharedPreferences("favorites", Context.MODE_PRIVATE)
 
@@ -173,7 +170,6 @@ class MainActivity : AppCompatActivity() {
         binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))
 
 
-        //Skapa viewmodel
         val viewModelFactory = ViewModelFactory(
             dailyForecastRepository = DailyForecastRepository(),
             weatherRepository = WeatherRepository(),
@@ -183,9 +179,6 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherInfoViewModel::class.java)
 
 
-
-
-        // Bottom navigation
         binding.bottomNav.setOnItemSelectedListener{
 
             when (it.title){
@@ -208,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        // Om appen har tillgång till mobilen plats samt om mobilen är uppkopplad till internet så hämtas och presenteras väderdata
+
         if (networkEnabled() && locationEnabled()) {
             refreshContent()
         }
@@ -226,7 +219,6 @@ class MainActivity : AppCompatActivity() {
 
 
         // När användaren refreshar appen
-
         swipeRefreshLayout!!.setOnRefreshListener() {
 
             removeFragment()
@@ -316,7 +308,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // Favoriter
 
         binding.buttonFavorites.setOnClickListener(){
 
@@ -350,16 +341,13 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        if (intent.extras?.get("runFunction").toString().toBoolean())
+        // Denna kod körs när användaren har klickat på en favorit från listan med favoriter
+        if (intent.extras?.get("goToFavorite").toString().toBoolean())
         {
             val location = intent.extras?.get("selectedFavorite").toString()
 
             viewModel.getSearchedLocationDetails(location, this@MainActivity)
 
-            /*binding.forecastTab.selectTab(binding.forecastTab.getTabAt(0))*/
-
-            /*showHourlyForecast()
-            removeFragment()*/
         }
 
 
@@ -371,27 +359,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        Log.i("start", "started")
-    }
 
-   override fun onResume() {
-
-
-       super.onResume()
-
-
-
-
-
-    }
-
-
-
-
-
-    // Lägger till extra funkationalitet till tillbakaknappen genom att overridea funktionen
     override fun onBackPressed() {
 
         binding.currentGroup.isInvisible = false
@@ -430,7 +398,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    // Funktion som anropas när användaren refreshar appen
+
     private fun refreshContent()
     {
 
@@ -439,13 +407,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.refreshLocationData(this@MainActivity)
         showCurrentWeather()
 
+        // Om 24 timmars prognos är markerad
         if (tab == 0)
         {
-
             viewModel.refreshHourlyForecast()
             showHourlyForecast()
 
         }
+        // Om 7 dagars prognos är markerad
         else if (tab == 1)
         {
 
@@ -485,7 +454,7 @@ class MainActivity : AppCompatActivity() {
     private fun locationEnabled() : Boolean
     {
         var locationEnabled = false
-        // Kollar om platstjänsten är aktiverad
+
         if(!viewModel.isLocationEnabled(this)){
 
             Toast.makeText(this, "Platstjänsten är inte aktiverad, aktivera platstjänsten för att hämta aktuell väderdata", Toast.LENGTH_SHORT).show()
@@ -571,10 +540,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // Uppdatera UI gällande nuvarande väder
+
     private fun showCurrentWeather()
     {
-        // Observera viewmodel
+
         viewModel.currentWeatherList.removeObservers(this)
         viewModel.currentWeatherList.observe(this, Observer { weatherResponse ->
             Log.i("response", weatherResponse.id.toString())
@@ -583,20 +552,8 @@ class MainActivity : AppCompatActivity() {
 
 
             checkIfFavorited(weatherResponse.name)
-            // Visa väderdata för nuvarande plats och tid
 
-           /* // Tar bort 'kommun' från vissa resultat
-            if (weatherResponse.name.contains("Municipality"))
-            {
-                binding.cityName.text = weatherResponse.name.substringBefore("Municipality")
-            }
-            else
-            {*/
-                binding.cityName.text = weatherResponse.name
-           /* }*/
-
-
-
+            binding.cityName.text = weatherResponse.name
 
             binding.countryName.text = weatherResponse.sys.country
             binding.currentWind.text = weatherResponse.wind.speed.toInt().toString() + " m/s"
@@ -604,7 +561,7 @@ class MainActivity : AppCompatActivity() {
             binding.currentDescription.text = weatherResponse.weather[0].description.replaceFirstChar {
                 weatherResponse.weather[0].description[0].uppercase()
             }
-            // Hämta ikon
+
             val uri = "https://openweathermap.org/img/w/" + weatherResponse.weather[0].icon + ".png"
             Picasso.get().load(uri).into(binding.iconWeather)
 
@@ -623,14 +580,15 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    // Uppdatera UI gällande listan med dygnsprognoser
+
     private fun showDailyForecast()
     {
         binding.forecastRv.adapter = null
 
         viewModel.dailyForecastList.observe(this, Observer { dailyForecastResponse ->
-                binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                val timeZone = dailyForecastResponse.timezone
+
+            binding?.forecastRv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            val timeZone = dailyForecastResponse.timezone
 
                 // Skicka data som hämtas från api:n till adaptern
             if(!showHourlyAdapter)
@@ -638,14 +596,11 @@ class MainActivity : AppCompatActivity() {
                 binding?.forecastRv?.adapter = DailyForecastAdapter(dailyForecastResponse, this, timeZone)
             }
 
-
-
         })
 
        if(viewModel.finishRefresh)
         {
             swipeRefreshLayout!!.isRefreshing = false
-
 
         }
 
@@ -658,7 +613,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    // Uppdatera UI gällande listan med timme för timme prognoser
+
     private fun showHourlyForecast()
     {
 
