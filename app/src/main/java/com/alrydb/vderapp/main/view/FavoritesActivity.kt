@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alrydb.vderapp.R
 import com.alrydb.vderapp.databinding.ActivityFavoritesBinding
@@ -56,5 +57,29 @@ class FavoritesActivity : AppCompatActivity() {
             true
 
         }
+
+        binding.fabClearFavorite.setOnClickListener(){
+
+            var favorites = tinyDB.getListString("favorites")
+
+            if (favorites.size > 0) {
+                favorites.clear()
+
+                tinyDB.putListString("favorites", favorites)
+
+                binding.favoritesRv.adapter = FavoritesAdapter(favorites, this)
+
+                /*val intent = Intent(this, FavoritesActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)*/
+            }
+            else
+            {
+                Toast.makeText(this, "Det finns inga favoriter att ta bort", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+
     }
 }

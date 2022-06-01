@@ -7,12 +7,6 @@
     tools:context=".main.view.FavoritesActivity">
 
 
-
-
-
-
-
-
     <!-- Top nav -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_nav"
@@ -25,20 +19,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:text="@string/title_favorites"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:text="@string/title_favorites"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
 
 
     <!-- Bottom nav -->
@@ -61,6 +52,21 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_nav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_nav" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_clear_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/colorPrimary"
+        app:tint="@color/white"
+        android:contentDescription="remove"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#FFFFFF" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
